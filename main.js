@@ -287,7 +287,7 @@ function setValidationTransactions(row, transactionType) {
 /**
  * transactions シートの転記用セルに関数を設定する
  * 
- * @param {Number} row
+ * @param {number} row
  */
 function setFormulaOfTransactionComment(row) {
   var sheet = getTransactionsSheet();
@@ -333,7 +333,7 @@ function setCategoriesToDailySheet() {
 /**
  * expences シートからすべてのエントリを取得する
  *
- * @return {Array} array
+ * @return {array} 
  */
 function getAllExpences() {
   var sheet = getExpencesSheet();
@@ -360,7 +360,7 @@ function addNote(range, note) {
 /**
  * expences シートで入力した店名を daily シートの該当セルにメモとして記載する
  *
- * @param {Number} begin 日付のシリアル値
+ * @param {Number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
  */
 function setExpencesNotes(begin) {
   var unixtime = (begin - 25569) * 86400000;
@@ -372,9 +372,9 @@ function setExpencesNotes(begin) {
 
   // 年、月が同じエントリのみを抽出する
   // 1 行目はタイトル行なので 2 行目から始める slice(1)
-  var targetMonthExpences = allExpences.slice(1).filter(function (value) {
-    var date = value[0];
-    if (date.getFullYear() === year && date.getMonth() === month) { return value; }
+  var targetMonthExpences = allExpences.slice(1).filter(function (row) {
+    var date = row[0];
+    if (date.getFullYear() === year && date.getMonth() === month) { return row; }
   });
 
   var sheet = getDailySheet();
@@ -384,8 +384,8 @@ function setExpencesNotes(begin) {
   var categoriesArray = sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
 
   // 2 次元配列を flatten
-  var categories = categoriesArray.reduce(function (previous, current) {
-    return previous.concat(current);
+  var categories = categoriesArray.reduce(function (prev, curr) {
+    return prev.concat(curr);
   });
 
   // 対象セルの初期値は D3
@@ -399,15 +399,10 @@ function setExpencesNotes(begin) {
     var goods = targetMonthExpences[i][5];
     var note = '';
 
-    if (shop && goods) {
-      note = shop + '(' + goods + ')';
-    } else if (shop) {
-      note = shop;
-    } else if (goods) {
-      note = goods;
-    } else {
-      continue;
-    }
+    if (shop && goods) { note = shop + '(' + goods + ')'; }
+    else if (shop) { note = shop; }
+    else if (goods) { note = goods; }
+    else { continue; }
 
     var main = targetMonthExpences[i][2];
     var sub = targetMonthExpences[i][3];
@@ -432,4 +427,3 @@ function setExpencesNotes(begin) {
     addNote(targetCell, note);
   }
 }
-
