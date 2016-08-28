@@ -61,13 +61,9 @@ function getAllCategories() {
 function getMainCategories() {
   if (getMainCategories.memolist) { return getMainCategories.memolist; }
   var allCategories = getAllCategories();
-  getMainCategories.memolist = allCategories.map(
-    function (arr) { return arr[0]; }
-  );
-  // getMainCategories.memolist = [];
-  // for (var i = 0; i < allCategories.length; i++) {
-  //   getMainCategories.memolist.push(allCategories[i][0]);
-  // }
+  getMainCategories.memolist = allCategories.map(function (arr) {
+    return arr[0];
+  });
   return getMainCategories.memolist;
 }
 
@@ -152,13 +148,13 @@ function onEdit(e) {
  */
 function setValidationMainCategories() {
   var mainCategories = getMainCategories();
-  var mainCategoriesRule = SpreadsheetApp.newDataValidation()
+  var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(mainCategories, true)
     .build();
   var sheet = getExpencesSheet();
-  var mainCategoriesColumn = sheet.getRange(2, 3, sheet.getLastRow() + 50);
-  mainCategoriesColumn.clearDataValidations();
-  mainCategoriesColumn.setDataValidation(mainCategoriesRule);
+  var column = sheet.getRange(2, 3, sheet.getLastRow() + 50);
+  column.clearDataValidations();
+  column.setDataValidation(rule);
 }
 
 /**
@@ -167,13 +163,13 @@ function setValidationMainCategories() {
  */
 function setValidationCreditcards() {
   var cardNames = getCreditcardNames();
-  var cardNamesRule = SpreadsheetApp.newDataValidation()
+  var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(cardNames, true)
     .build();
   var sheet = getExpencesSheet();
-  var cardColumn = sheet.getRange(2, 7, sheet.getLastRow() + 50);
-  cardColumn.clearDataValidations();
-  cardColumn.setDataValidation(cardNamesRule);
+  var column = sheet.getRange(2, 7, sheet.getLastRow() + 50);
+  column.clearDataValidations();
+  column.setDataValidation(rule);
 }
 /**
  * transactions シートの取引種類列に入力規則を設定する
@@ -181,13 +177,13 @@ function setValidationCreditcards() {
  */
 function setValidationTransactionsTypes() {
   var transactionTypes = getTransactionTypes();
-  var transactionsRule = SpreadsheetApp.newDataValidation()
+  var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(transactionTypes, true)
     .build();
   var sheet = getTransactionsSheet();
-  var transactionTypeColumn = sheet.getRange(2, 2, sheet.getLastRow() + 50);
-  transactionTypeColumn.clearDataValidations();
-  transactionTypeColumn.setDataValidation(transactionsRule);
+  var column = sheet.getRange(2, 2, sheet.getLastRow() + 50);
+  column.clearDataValidations();
+  column.setDataValidation(rule);
 }
 
 /**
@@ -197,10 +193,10 @@ function setValidationTransactionsTypes() {
  * @param {String} mainCategory
  */
 function setValidationSubcategories(row, mainCategory) {
-  var expencesSheet = getExpencesSheet();
+  var sheet = getExpencesSheet();
   var allCategories = getAllCategories();
 
-  var subCategoryRange = expencesSheet.getRange(row, 4);
+  var subCategoryRange = sheet.getRange(row, 4);
   subCategoryRange.clearDataValidations();
 
   // 既存の値を削除した場合は D 列の値を削除する
@@ -230,7 +226,7 @@ function setValidationSubcategories(row, mainCategory) {
  * @param {String} transactionType
  */
 function setValidationTransactions(row, transactionType) {
-  var transactionsSheet = getTransactionsSheet();
+  var sheet = getTransactionsSheet();
   var transactionTypes = getTransactionTypes();
 
   // 銀行名のリスト
@@ -240,11 +236,11 @@ function setValidationTransactions(row, transactionType) {
   var cash = banks[0];
 
   var banksRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(banks.slice(1), true)
+    .requireValueInList(banks, true)
     .build();
 
-  var from = transactionsSheet.getRange(row, 3);
-  var to = transactionsSheet.getRange(row, 4);
+  var from = sheet.getRange(row, 3);
+  var to = sheet.getRange(row, 4);
 
   from.clearDataValidations();
   to.clearDataValidations();
