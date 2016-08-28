@@ -248,13 +248,6 @@ function setValidationTransactions(row, transactionType) {
   from.clearContent();
   to.clearContent();
 
-  // // 既存の値を削除した場合は C,D 列の値を削除する
-  // // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
-  // if (typeof transactionType === 'object') {
-  //   from.clearContent();
-  //   to.clearContent();
-  // }
-
   switch (transactionType) {
     case '現金引出':
       from.setDataValidation(banksRule);
@@ -343,11 +336,9 @@ function getAllExpences() {
  * @param {string} note
  */
 function addNote(range, note) {
-  var existingNote = range.getNote();
-  if (existingNote) {
-    var array = [existingNote, note];
-    var overwriteNote = array.join(',');
-    range.setNote(overwriteNote);
+  var existNote = range.getNote();
+  if (existNote) {
+    range.setNote(existNote + ',' + note);
   } else {
     range.setNote(note);
   }
