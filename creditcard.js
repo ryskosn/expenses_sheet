@@ -54,7 +54,7 @@ function getCreditcardExpences() {
 /**
  * クレジットカードの締め日を求める
  *
- * @param {object} card
+ * @param {Object} card
  * @param {number} month 指定がなければ今月とする
  * @return {Date} cutoffDate
  */
@@ -76,7 +76,7 @@ function getCutoffDate(card, month) {
 /**
  * 指定した creditcard の月間トータルを集計する
  *
- * @param {object} card
+ * @param {Object} card
  * @param {Date} cutoffDate 締め日
  * @return {number} sum
  */
@@ -115,7 +115,7 @@ function getSumOfCreditcardExpences(card, cutoffDate) {
 /**
  * クレジットカードの支払い日を求める
  *
- * @param {object} card
+ * @param {Object} card
  * @param {Date} cutoffDate 締め日
  * @return {Date} dueDate
  */
@@ -169,7 +169,7 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
 }
 
 /**
- * カード名と締め日のペアを求める
+ * 重複を取り除いたカード名と締め日のペアを求める
  *
  * @return {array} cardName: string, cutoffDateTime: number
  */
@@ -195,7 +195,7 @@ function getUniqueCardnameAndCutoffDate() {
     if (a.cutoffDateTime > b.cutoffDateTime) return 1;
   });
 
-  // 重複を除外 null が入る？
+  // 重複を除外 null or undefined が入る場合がある？
   arr = arr.map(function (x, i, self) {
     if (i === 0) { return x; }
     else if (x.cardName === self[i - 1].cardName) {
@@ -218,10 +218,11 @@ function getExistingCreditcardEntries() {
 
 /**
  * creditcard のエントリを書き込む
- *
  */
 function writeCreditcardEntries() {
   var arr = getUniqueCardnameAndCutoffDate();
+
+  // null, undefined を除外する
   arr = arr.filter(function (x) {
     if (x) { return x; }
   });
@@ -238,7 +239,10 @@ function writeCreditcardEntries() {
     };
   });
 
-  // シートへの書き込み処理
+  /**
+   * シートへの書き込み処理
+   * @param {Object} entry カードの請求情報（締め支払い金額）  
+   */
   function write(entry) {
     var sheet = getCreditcardSheet();
     var row = sheet.getLastRow() + 1;
