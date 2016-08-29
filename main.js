@@ -282,8 +282,8 @@ function setFormulaOfTransactionComment(row) {
   var sheet = getTransactionsSheet();
   var cell = sheet.getRange(row, 7);
 
-  // =if(ISBLANK($F8),$B8,CONCATENATE($B8,"(",$F8,")"))
-  var formula = '=if(ISBLANK($F' + row + '),$B' + row + ',CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
+  // =IF(ISBLANK($F8),$B8,CONCATENATE($B8,"(",$F8,")"))
+  var formula = '=IF(ISBLANK($F' + row + '),$B' + row + ',CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
   cell.setFormula(formula);
 }
 
