@@ -90,3 +90,7 @@ function testCheck() {
   }, array);
   Logger.log(objList);
 }
+
+function testGetCreditcardExpences(){
+  getCreditcardExpences();
+}

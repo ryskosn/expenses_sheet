@@ -44,9 +44,25 @@ function getCreditcardNames() {
 function getCreditcardExpences() {
   var allExpences = getAllExpences();
 
+  /**
+   * クレジットカードかどうか判定する
+   * @param {string} cardName
+   * @return {boolean}
+   */
+  function isCreditcard(cardName) {
+    var others = [
+      'Suica',
+      'nanaco',
+    ];
+    var result = others.every(function (x) {
+      if (x !== cardName) { return x; }
+    });
+    return result;
+  }
+
   // タイトル行をスキップするため slice(1)
   var creditcardExpences = allExpences.slice(1).filter(function (row) {
-    if (row[6]) { return row; }
+    if (row[6] && isCreditcard(row[6])) { return row; }
   });
   return creditcardExpences;
 }
