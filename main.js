@@ -339,7 +339,9 @@ function setCategoriesToDailySheet() {
  */
 function getAllExpences() {
   var sheet = getExpencesSheet();
-  return sheet.getDataRange().getValues();
+
+  // タイトル行をスキップするため slice(1)
+  return sheet.getDataRange().getValues().slice(1);
 }
 
 /**
@@ -371,8 +373,7 @@ function setExpencesNotes(begin) {
   var allExpences = getAllExpences();
 
   // 年、月が同じエントリのみを抽出する
-  // 1 行目はタイトル行なので 2 行目から始める slice(1)
-  var targetMonthExpences = allExpences.slice(1).filter(function (row) {
+  var targetMonthExpences = allExpences.filter(function (row) {
     var date = row[0];
     if (date.getFullYear() === year && date.getMonth() === month) { return row; }
   });
