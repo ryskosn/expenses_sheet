@@ -251,7 +251,7 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
 
   if (existentEntries === []) {
     arrOfObj.forEach(function (x) {
-      writeer(x);
+      writer(x);
     });
     return;
   }
