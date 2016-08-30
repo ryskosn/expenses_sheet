@@ -91,6 +91,13 @@ function testCheck() {
   Logger.log(objList);
 }
 
-function testGetCreditcardExpences(){
+function testGetCreditcardExpences() {
   getCreditcardExpences();
+}
+
+function testGetSheet() {
+  var sheetName = creditcardSheetName;
+  var result = getSheet(sheetName);
+  Logger.log(result);
+  Logger.log(typeof result);
 }

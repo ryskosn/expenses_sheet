@@ -50,6 +50,19 @@ function getCreditcardListSheet() {
   return getCreditcardListSheet.memoSheet;
 }
 
+// シートを取得する
+function getSheet(sheetName) {
+  var pairs = {};
+  pairs[categorySheetName] = getCategorySheet();
+  pairs[expencesSheetName] = getExpencesSheet();
+  pairs[transactionsSheetName] = getTransactionsSheet();
+  pairs[banklistSheetName] = getBanklistSheet();
+  pairs[dailySheetName] = getDailySheet();
+  pairs[creditcardSheetName] = getCreditcardSheet();
+  pairs[creditcardListSheetName] = getCreditcardListSheet();
+  return pairs[sheetName];
+}
+
 // 特定のリストのメモ化
 function getAllCategories() {
   if (getAllCategories.memolist) { return getAllCategories.memolist; }
