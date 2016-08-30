@@ -6,10 +6,10 @@
  */
 function getCreditcards() {
   var sheet = getCreditcardListSheet();
-  var arr = sheet.getDataRange().getValues();
 
   // タイトル行をスキップするため slice(1)
-  var creditcards = arr.slice(1).map(function (row) {
+  var arr = sheet.getDataRange().getValues().slice(1);
+  var creditcards = arr.map(function (row) {
     var card = new Object();
 
     // [ 名前, 締め日（月末なら 0）, 支払月（翌月なら 1）, 支払日 ] 
@@ -60,8 +60,7 @@ function getCreditcardExpences() {
     return result;
   }
 
-  // タイトル行をスキップするため slice(1)
-  var creditcardExpences = allExpences.slice(1).filter(function (row) {
+  var creditcardExpences = allExpences.filter(function (row) {
     if (row[6] && isCreditcard(row[6])) { return row; }
   });
   return creditcardExpences;
@@ -189,7 +188,7 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
  *
  * @return {array} cardName: string, cutoffDateTime: number
  */
-function getUniqueCardnameAndCutoffDate() {
+function getUniqueCardExpences() {
   var expences = getCreditcardExpences();
   var arr = expences.map(function (row) {
     var pDate = row[0];
@@ -198,8 +197,10 @@ function getUniqueCardnameAndCutoffDate() {
     var cutoffDate = getCutoffDateOfPurchase(pDate, card);
     return {
       'cardName': cardName,
+      'card': card,
       'cutoffDate': cutoffDate,
       'cutoffDateTime': cutoffDate.getTime(),
+      'dueDate': getDueDate(card, cutoffDate),
     };
   });
 
@@ -233,8 +234,7 @@ function getUniqueCardnameAndCutoffDate() {
  */
 function getExistentCreditcardEntries() {
   var sheet = getCreditcardSheet();
-  var arr = sheet.getDataRange().getValues();
-  return arr.slice(1);
+  return sheet.getDataRange().getValues().slice(1);
 }
 
 /**
@@ -270,24 +270,29 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
  * creditcard のエントリを書き込む
  */
 function writeCreditcardEntries() {
-  var arr = getUniqueCardnameAndCutoffDate();
-  var creditEntries = arr.map(function (x) {
-    var cardName = x['cardName'];
-    var card = getCardByCardName(cardName);
-    var cutoffDate = x['cutoffDate'];
-    return {
-      'cardName': cardName,
-      'card': card,
-      'cutoffDate': cutoffDate,
-      'dueDate': getDueDate(card, cutoffDate),
-    };
-  });
+  var sheetName = creditcardSheetName;
+  var arr = getUniqueCardExpences();
 
   /**
-   * シートへの書き込み処理
-   * @param {Object} entry カードの請求情報（締め支払い金額）  
+   * obj と合致するものが array に含まれているか検査する
+   * 
+   * @param {Object} obj
+   * @param {array} array
+   * @return {boolean} 含まれていたら true を返す
    */
-  function write(entry) {
+  function checker(obj, array) {
+    var result = array.some(function (x) {
+      return (obj['cutoffDateTime'] === x[0].getTime() && obj['cardName'] === x[1]);
+    });
+    return result;
+  }
+
+  /**
+   * シートに書き込む
+   * 
+   * @param {Object} entry
+   */
+  function writer(entry) {
     var sheet = getCreditcardSheet();
     var row = sheet.getLastRow() + 1;
 
@@ -306,33 +311,9 @@ function writeCreditcardEntries() {
     return;
   }
 
-  // creditcard シートにすでにあるものを取得
-  var existentEntries = getExistentCreditcardEntries();
-  if (existentEntries === []) {
-    creditEntries.forEach(function (x) {
-      write(x);
-    });
-    return;
-  }
-
-  // obj と合致するものが array に含まれているか検査する
-  function check(obj, array) {
-    var result = array.some(function (x) {
-      return (obj.cutoffDate.getTime() === x[0].getTime() && obj.cardName === x[1]);
-    });
-    return result;
-  }
-
-  var entriesToWrite = creditEntries.filter(function (x) {
-    return !check(x, this);
-  }, existentEntries);
-
-  entriesToWrite.forEach(function (x) {
-    write(x);
-  });
+  writeNewEntries(sheetName, arr, checker, writer);
 
   // sort
   var sheet = getCreditcardSheet();
   sheet.getRange(2, 1, sheet.getLastRow(), 4).sort({ column: 1, ascending: false });
 }
-
