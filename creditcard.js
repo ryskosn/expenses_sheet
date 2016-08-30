@@ -218,6 +218,11 @@ function getUniqueCardnameAndCutoffDate() {
       if (x.cutoffDateTime !== self[i - 1].cutoffDateTime) { return x; }
     } else { return x; }
   });
+
+  // null, undefined を除外する
+  arr = arr.filter(function (x) {
+    if (x) { return x; }
+  });
   return arr;
 }
 
@@ -226,10 +231,22 @@ function getUniqueCardnameAndCutoffDate() {
  *
  * @return {array} arr タイトル行を除外するため slice(1)
  */
-function getExistingCreditcardEntries() {
+function getExistentCreditcardEntries() {
   var sheet = getCreditcardSheet();
   var arr = sheet.getDataRange().getValues();
   return arr.slice(1);
+}
+
+/**
+ * シートに未入力のデータがあれば書き込む
+ *
+ * @param {Sheet} sheetName 対象のシート名
+ * @param {array} arrOfObj 書き込むデータオブジェクトの配列
+ * @param {function} checker 既存のデータとの重複をチェックする関数
+ * @param {function} writer オブジェクトを書き込む関数
+ */
+function writeNewEntries(sheetName, arrOfObj, checker, writer){
+  var existentEntries;
 }
 
 /**
@@ -237,12 +254,6 @@ function getExistingCreditcardEntries() {
  */
 function writeCreditcardEntries() {
   var arr = getUniqueCardnameAndCutoffDate();
-
-  // null, undefined を除外する
-  arr = arr.filter(function (x) {
-    if (x) { return x; }
-  });
-
   var creditEntries = arr.map(function (x) {
     var cardName = x['cardName'];
     var card = getCardByCardName(cardName);
@@ -279,8 +290,8 @@ function writeCreditcardEntries() {
   }
 
   // creditcard シートにすでにあるものを取得
-  var existEntries = getExistingCreditcardEntries();
-  if (existEntries === []) {
+  var existentEntries = getExistentCreditcardEntries();
+  if (existentEntries === []) {
     creditEntries.forEach(function (x) {
       write(x);
     });
@@ -297,7 +308,7 @@ function writeCreditcardEntries() {
 
   var entriesToWrite = creditEntries.filter(function (x) {
     return !check(x, this);
-  }, existEntries);
+  }, existentEntries);
 
   entriesToWrite.forEach(function (x) {
     write(x);
