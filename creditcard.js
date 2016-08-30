@@ -245,8 +245,25 @@ function getExistentCreditcardEntries() {
  * @param {function} checker 既存のデータとの重複をチェックする関数
  * @param {function} writer オブジェクトを書き込む関数
  */
-function writeNewEntries(sheetName, arrOfObj, checker, writer){
-  var existentEntries;
+function writeNewEntries(sheetName, arrOfObj, checker, writer) {
+  var sheet = getSheet(sheetName);
+  var existentEntries = sheet.getDataRange().getValues().slice(1);
+
+  if (existentEntries === []) {
+    arrOfObj.forEach(function (x) {
+      writeer(x);
+    });
+    return;
+  }
+
+  var entriesToWrite = arrOfObj.filter(function (x) {
+    return !checker(x, this);
+  }, existentEntries);
+
+  entriesToWrite.forEach(function (x) {
+    writer(x);
+  });
+  return;
 }
 
 /**
