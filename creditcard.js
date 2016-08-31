@@ -250,9 +250,7 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
   var existentEntries = sheet.getDataRange().getValues().slice(1);
 
   if (existentEntries === []) {
-    arrOfObj.forEach(function (x) {
-      writer(x);
-    });
+    arrOfObj.forEach(function (x) { writer(x); });
     return;
   }
 
@@ -260,9 +258,7 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
     return !checker(x, this);
   }, existentEntries);
 
-  entriesToWrite.forEach(function (x) {
-    writer(x);
-  });
+  entriesToWrite.forEach(function (x) { writer(x); });
   return;
 }
 
