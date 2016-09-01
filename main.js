@@ -351,9 +351,9 @@ function getAllExpences() {
  * @param {string} note
  */
 function addNote(range, note) {
-  var existNote = range.getNote();
-  if (existNote) {
-    range.setNote(existNote + ',' + note);
+  var existentNote = range.getNote();
+  if (existentNote) {
+    range.setNote(existentNote + ',' + note);
   } else {
     range.setNote(note);
   }
