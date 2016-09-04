@@ -55,13 +55,13 @@ function getCreditcardExpences() {
       'nanaco',
     ];
     var result = others.every(function (x) {
-      if (x !== cardName) { return x; }
+      return (x !== cardName);
     });
     return result;
   }
 
   var creditcardExpences = allExpences.filter(function (row) {
-    if (row[6] && isCreditcard(row[6])) { return row; }
+    return (row[6] && isCreditcard(row[6]));
   });
   return creditcardExpences;
 }
@@ -106,9 +106,7 @@ function getSumOfCreditcardExpences(card, cutoffDate) {
   // 該当するエントリを抽出
   // [ 日付, 金額, カテゴリ, サブカテゴリ, 店名, 品名, カード区分, 計上日修正 ]
   var expences = allCardExpences.filter(function (row) {
-    if (lastCutoffDate.getTime() < row[0].getTime() && row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName) {
-      return row;
-    }
+    return (lastCutoffDate.getTime() < row[0].getTime() && row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName);
   });
 
   var sum = 0;
@@ -155,7 +153,7 @@ function getDueDate(card, cutoffDate) {
 function getCardByName(cardName) {
   var cards = getCreditcards();
   var purchaseCard = cards.filter(function (card) {
-    return card['name'] === cardName;
+    return (card['name'] === cardName);
   });
   return purchaseCard[0];
 }

@@ -381,8 +381,7 @@ function setExpencesNotes(sheet, begin) {
 
   // 年、月が同じエントリのみを抽出する
   var targetMonthExpences = allExpences.filter(function (row) {
-    var date = row[0];
-    if (date.getFullYear() === year && date.getMonth() === month) { return row; }
+    return (row[0].getFullYear() === year && row[0].getMonth() === month);
   });
 
   sheet.getDataRange().clearNote();
