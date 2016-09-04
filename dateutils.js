@@ -50,8 +50,6 @@ function isJapaneseHoliday(year, month, date) {
  * @return {Date} 直近営業日の dateObj
  */
 function getNextBusinessDay(dateObj) {
-  Logger.log('in getNextBusinessDay()');
-
   var year = dateObj.getFullYear();
   var month = dateObj.getMonth();
   var date = dateObj.getDate();
@@ -77,6 +75,7 @@ function getNextBusinessDay(dateObj) {
       return getNextBusinessDay(nextDay);
 
     default:
+
       // 祝日なら次の日付を求める
       if (isJapaneseHoliday(year, month, date)) {
         var nextDay = getNextDay(dateObj, 1);
