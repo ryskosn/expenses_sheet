@@ -141,8 +141,8 @@ function onEdit(e) {
   // transactions シートで取引種類を選択
   if (sheetName === transactionsSheetName) {
     if (col === 2) {
-      setValidationTransactions(row, e.value);
-      setFormulaOfTransactionComment(row);
+      setValidationTransactions(sheet, row, e.value);
+      setFormulaOfTransactionComment(sheet, row);
     }
   }
 
@@ -235,11 +235,11 @@ function setValidationSubcategories(row, mainCategory) {
 /**
  * 取引種類を指定すると、それに応じて入力規則、値を設定する。
  *
+ * @param {Sheet} sheet
  * @param {Number} row
  * @param {String} transactionType
  */
-function setValidationTransactions(row, transactionType) {
-  var sheet = getTransactionsSheet();
+function setValidationTransactions(sheet, row, transactionType) {
   var transactionTypes = getTransactionTypes();
 
   // 銀行名のリスト
@@ -289,10 +289,11 @@ function setValidationTransactions(row, transactionType) {
 /**
  * transactions シートの転記用セルに関数を設定する
  * 
+ * @param {Sheet} sheet
  * @param {number} row
  */
-function setFormulaOfTransactionComment(row) {
-  var sheet = getTransactionsSheet();
+function setFormulaOfTransactionComment(sheet, row) {
+  // var sheet = getTransactionsSheet();
   var cell = sheet.getRange(row, 7);
 
   // =IF(ISBLANK($F8),$B8,CONCATENATE($B8,"(",$F8,")"))
