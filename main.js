@@ -116,6 +116,9 @@ function onOpen() {
 
   // クレジットカードの集計結果を入力する
   writeCreditcardEntries();
+
+  // クレジットカードの支払いエントリを transactions シートに書き込む
+  writeCreditcardWithdrawal();
 }
 
 /**
