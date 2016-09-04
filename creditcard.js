@@ -247,12 +247,13 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
   var entriesToWrite = arrOfObj.filter(function (x) {
     return !checker(x, this);
   }, existentEntries);
+
   entriesToWrite.forEach(function (x) { writer(sheet, x); });
   return;
 }
 
 /**
- * creditcard のエントリを書き込む
+ * creditcard シートにエントリを書き込む
  */
 function writeCreditcardEntries() {
   var sheet = getCreditcardSheet();
@@ -283,20 +284,88 @@ function writeCreditcardEntries() {
 
     // 締め日
     sheet.getRange(row, 1).setValue(entry['cutoffDate']);
+
     // カード名
     sheet.getRange(row, 2).setValue(entry['cardName']);
+
     // 支払い日
     sheet.getRange(row, 3).setValue(entry['dueDate']);
+
     // 金額を集計
     // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A3,-1),expences!$A:$A<$A3,expences!$G:$G=$B3))
     var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' + expencesSheetName +
       '!$A:$A>=edate($A' + row + ',-1),' + expencesSheetName + '!$A:$A<$A' + row + ',' +
       expencesSheetName + '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
-    return;
   }
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
   sheet.getRange(2, 1, sheet.getLastRow(), 4).sort({ column: 1, ascending: false });
+}
+
+
+function writeCreditcardWithdrawal() {
+  var sheet = getTransactionsSheet();
+  var creditcardEntries = getCreditcardSheet().getDataRange().getValues().slice(1);
+  var arr = creditcardEntries.map(function (row) {
+    return {
+      'cutoffDate': row[0],
+      'cardName': row[1],
+      'dueDate': row[2],
+      'dueDateTime': row[2].getTime(),
+    };
+  });
+  Logger.log(arr);
+  /**
+   * obj と合致するものが array に含まれているか検査する
+   * 
+   * @param {Object} obj
+   * @param {array} array
+   * @return {boolean} 含まれていたら true を返す
+   */
+  function checker(obj, array) {
+    var result = array.some(function (x) {
+      return (obj['dueDateTime'] === x[0].getTime() && x[1] === '引落' && obj['cardName'] === x[5]);
+    });
+    return result;
+  }
+
+  /**
+   * シートに書き込む
+   * 
+   * @param {Sheet} sheet
+   * @param {Object} entry
+   */
+  function writer(sheet, entry) {
+    var row = sheet.getLastRow() + 1;
+
+    // 日付
+    sheet.getRange(row, 1).setValue(entry['dueDate']);
+
+    // 取引種類
+    sheet.getRange(row, 2).setValue('引落');
+    setValidationTransactions(sheet, row, '引落');
+
+    // どこから
+    sheet.getRange(row, 3).setValue('要入力');
+
+    // いくら
+    // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A2,-1),expences!$A:$A<$A2,expences!$G:$G=$B2))
+    var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
+    var formula = '=SUM(FILTER(expences!$B:$B,' +
+      'expences!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
+      'expences!$A:$A<' + cutoffDateStr + ',' +
+      'expences!$G:$G=$F' + row + '))';
+    sheet.getRange(row, 5).setFormula(formula);
+    sheet.getRange(row, 5).setFontColor('black');
+
+    // 備考
+    sheet.getRange(row, 6).setValue(entry['cardName']);
+    setFormulaOfTransactionComment(sheet, row);
+  }
+  writeNewEntries(sheet, arr, checker, writer);
+
+  // sort
+  sheet.getRange(2, 1, sheet.getLastRow(), 7).sort({ column: 1, ascending: true });
 }
