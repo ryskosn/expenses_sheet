@@ -70,21 +70,21 @@ function getCreditcardExpences() {
  * クレジットカードの締め日を求める
  *
  * @param {Object} card
- * @param {number} month 指定がなければ今月とする
+ * @param {number} month
  * @return {Date} cutoffDate
  */
 function getCutoffDate(card, month) {
 
   // 締め日
   var cutoffDate = new Date();
-  if (month) { cutoffDate.setMonth(month); }
+  cutoffDate.setMonth(month);
 
   // 月末締めの場合
   if (card['cutoffDate'] === 0) {
     cutoffDate = offsetMonth(cutoffDate, 1);
   }
   cutoffDate.setDate(card['cutoffDate']);
-  cutoffDate.setHours(23, 59, 59, 000);
+  cutoffDate.setHours(23, 59, 59, 0);
   return cutoffDate;
 }
 
@@ -169,17 +169,18 @@ function getCardByCardName(cardName) {
  */
 function getCutoffDateOfPurchase(purchaseDate, card) {
   var pm = purchaseDate.getMonth();
-  var cutoffDate = getCutoffDate(card, pm);
-
   var pd = purchaseDate.getDate();
+
+  // 購入月の締め日
+  var cutoffDate = getCutoffDate(card, pm);
   var cd = card['cutoffDate'];
 
-  // 当月締め日が過ぎていた場合
-  if (cd !== 0) {
-    if (pd > cd) {
-      cutoffDate = offsetMonth(cutoffDate, 1);
-    }
+  // 購入月の締め日を過ぎていた場合
+  if (cd !== 0 && pd > cd) {
+    cutoffDate = offsetMonth(cutoffDate, 1);
+    cutoffDate.setHours(23, 59, 59, 0);
   }
+  Logger.log('cutoffDate:'); Logger.log(cutoffDate);
   return cutoffDate;
 }
 
@@ -240,7 +241,7 @@ function getExistentCreditcardEntries() {
 /**
  * シートに未入力のデータがあれば書き込む
  *
- * @param {Sheet} sheetName 対象のシート名
+ * @param {Sheet} sheet 対象のシートオブジェクト
  * @param {array} arrOfObj 書き込むデータオブジェクトの配列
  * @param {function} checker 既存のデータとの重複をチェックする関数
  * @param {function} writer オブジェクトを書き込む関数
@@ -252,14 +253,13 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
   if (existentEntries === []) {
     arrOfObj.forEach(function (x) { writer(x); });
     return;
+  } else {
+    var entriesToWrite = arrOfObj.filter(function (x) {
+      return !checker(x, this);
+    }, existentEntries);
+    entriesToWrite.forEach(function (x) { writer(x); });
+    return;
   }
-
-  var entriesToWrite = arrOfObj.filter(function (x) {
-    return !checker(x, this);
-  }, existentEntries);
-
-  entriesToWrite.forEach(function (x) { writer(x); });
-  return;
 }
 
 /**
@@ -268,6 +268,8 @@ function writeNewEntries(sheetName, arrOfObj, checker, writer) {
 function writeCreditcardEntries() {
   var sheetName = creditcardSheetName;
   var arr = getUniqueCardExpences();
+  Logger.log('-----------------');
+  Logger.log(arr);
 
   /**
    * obj と合致するものが array に含まれているか検査する
@@ -286,6 +288,7 @@ function writeCreditcardEntries() {
   /**
    * シートに書き込む
    * 
+   * @param {Sheet} sheet
    * @param {Object} entry
    */
   function writer(entry) {
