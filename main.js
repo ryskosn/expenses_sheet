@@ -137,7 +137,7 @@ function onEdit(e) {
   // expences シートでメインカテゴリを選択
   if (sheetName === expencesSheetName) {
     if (col === 3) {
-      setValidationSubcategories(row, e.value);
+      setValidationSubcategories(sheet, row, e.value);
     }
   }
 
@@ -152,8 +152,8 @@ function onEdit(e) {
   // daily シートで表示月を選択
   if (sheetName === dailySheetName) {
     if (row === 1 && col === 1) {
-      setCategoriesToDailySheet();
-      setExpencesNotes(e.value);
+      setCategoriesToDailySheet(sheet);
+      setExpencesNotes(sheet, e.value);
     }
   }
 }
@@ -205,11 +205,11 @@ function setValidationTransactionsTypes() {
 /**
  * メインカテゴリを指定すると、D 列にサブカテゴリを要素とした入力規則を設定する。
  *
+ * @param {Sheet} sheet
  * @param {Number} row
  * @param {String} mainCategory
  */
-function setValidationSubcategories(row, mainCategory) {
-  var sheet = getExpencesSheet();
+function setValidationSubcategories(sheet, row, mainCategory) {
   var allCategories = getAllCategories();
 
   var subCategoryRange = sheet.getRange(row, 4);
@@ -296,20 +296,22 @@ function setValidationTransactions(sheet, row, transactionType) {
  * @param {number} row
  */
 function setFormulaOfTransactionComment(sheet, row) {
-  // var sheet = getTransactionsSheet();
   var cell = sheet.getRange(row, 7);
 
-  // =IF(ISBLANK($F8),$B8,CONCATENATE($B8,"(",$F8,")"))
-  var formula = '=IF(ISBLANK($F' + row + '),$B' + row + ',CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
+  // =IF(ISBLANK($F8), $B8, CONCATENATE($B8,"(",$F8,")"))
+  var formula = '=IF(ISBLANK($F' + row + '),' +
+    '$B' + row + ',' +
+    'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
   cell.setFormula(formula);
 }
 
 /**
  * daily シートにメインカテゴリ、サブカテゴリを記載する
+ * 
+ * @param {Sheet} sheet
  */
-function setCategoriesToDailySheet() {
+function setCategoriesToDailySheet(sheet) {
   var allCategories = getAllCategories();
-  var sheet = getDailySheet();
   var row = 3;
   var col = 1;
 
@@ -366,9 +368,10 @@ function addNote(range, note) {
 /**
  * expences シートで入力した店名を daily シートの該当セルにメモとして記載する
  *
+ * @param {Sheet} sheet
  * @param {Number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
  */
-function setExpencesNotes(begin) {
+function setExpencesNotes(sheet, begin) {
   var unixtime = (begin - 25569) * 86400000;
   var beginDate = new Date(unixtime);
   var year = beginDate.getFullYear();
@@ -382,7 +385,6 @@ function setExpencesNotes(begin) {
     if (date.getFullYear() === year && date.getMonth() === month) { return row; }
   });
 
-  var sheet = getDailySheet();
   sheet.getDataRange().clearNote();
 
   // daily シート B3 から下のリスト
