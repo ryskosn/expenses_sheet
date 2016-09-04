@@ -293,8 +293,9 @@ function writeCreditcardEntries() {
 
     // 金額を集計
     // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A3,-1),expences!$A:$A<$A3,expences!$G:$G=$B3))
-    var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' + expencesSheetName +
-      '!$A:$A>=edate($A' + row + ',-1),' + expencesSheetName + '!$A:$A<$A' + row + ',' +
+    var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' +
+      expencesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
+      expencesSheetName + '!$A:$A<$A' + row + ',' +
       expencesSheetName + '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
   }
@@ -304,7 +305,9 @@ function writeCreditcardEntries() {
   sheet.getRange(2, 1, sheet.getLastRow(), 4).sort({ column: 1, ascending: false });
 }
 
-
+/**
+ * クレジットカードの支払いエントリを transactions シートに書き込む
+ */
 function writeCreditcardWithdrawal() {
   var sheet = getTransactionsSheet();
   var creditcardEntries = getCreditcardSheet().getDataRange().getValues().slice(1);
@@ -353,10 +356,10 @@ function writeCreditcardWithdrawal() {
     // いくら
     // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A2,-1),expences!$A:$A<$A2,expences!$G:$G=$B2))
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
-    var formula = '=SUM(FILTER(expences!$B:$B,' +
-      'expences!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
-      'expences!$A:$A<' + cutoffDateStr + ',' +
-      'expences!$G:$G=$F' + row + '))';
+    var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' +
+      expencesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
+      expencesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
+      expencesSheetName + '!$G:$G=$F' + row + '))';
     sheet.getRange(row, 5).setFormula(formula);
     sheet.getRange(row, 5).setFontColor('black');
 
