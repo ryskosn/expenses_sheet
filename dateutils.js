@@ -68,26 +68,20 @@ function getNextBusinessDay(dateObj) {
 
     // 土曜日
     case 6:
-      Logger.log('It\'s Saturday!');
       var nextDay = getNextDay(dateObj, 2);
       return getNextBusinessDay(nextDay);
 
     // 日曜日
     case 0:
-      Logger.log('It\'s Sunday!');
       var nextDay = getNextDay(dateObj, 1);
       return getNextBusinessDay(nextDay);
 
     default:
       // 祝日なら次の日付を求める
       if (isJapaneseHoliday(year, month, date)) {
-        Logger.log('it\s holiday!');
         var nextDay = getNextDay(dateObj, 1);
         return getNextBusinessDay(nextDay);
-
       } else {
-        Logger.log('not holiday...');
-        Logger.log(dateObj);
         return dateObj;
       }
   }
