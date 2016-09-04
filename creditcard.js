@@ -152,7 +152,7 @@ function getDueDate(card, cutoffDate) {
  * @param {string} cardName
  * @return {Object} purchaseCard[0]
  */
-function getCardByCardName(cardName) {
+function getCardByName(cardName) {
   var cards = getCreditcards();
   var purchaseCard = cards.filter(function (card) {
     return card['name'] === cardName;
@@ -194,7 +194,7 @@ function getUniqueCardExpences() {
   var arr = expences.map(function (row) {
     var pDate = row[0];
     var cardName = row[6];
-    var card = getCardByCardName(cardName);
+    var card = getCardByName(cardName);
     var cutoffDate = getCutoffDateOfPurchase(pDate, card);
     return {
       'cardName': cardName,
@@ -229,16 +229,6 @@ function getUniqueCardExpences() {
 }
 
 /**
- * creditcard シートに入力されているデータを取得する
- *
- * @return {array} arr タイトル行を除外するため slice(1)
- */
-function getExistentCreditcardEntries() {
-  var sheet = getCreditcardSheet();
-  return sheet.getDataRange().getValues().slice(1);
-}
-
-/**
  * シートに未入力のデータがあれば書き込む
  *
  * @param {Sheet} sheet 対象のシートオブジェクト
@@ -246,30 +236,27 @@ function getExistentCreditcardEntries() {
  * @param {function} checker 既存のデータとの重複をチェックする関数
  * @param {function} writer オブジェクトを書き込む関数
  */
-function writeNewEntries(sheetName, arrOfObj, checker, writer) {
-  var sheet = getSheet(sheetName);
+function writeNewEntries(sheet, arrOfObj, checker, writer) {
   var existentEntries = sheet.getDataRange().getValues().slice(1);
 
   if (existentEntries === []) {
-    arrOfObj.forEach(function (x) { writer(x); });
-    return;
-  } else {
-    var entriesToWrite = arrOfObj.filter(function (x) {
-      return !checker(x, this);
-    }, existentEntries);
-    entriesToWrite.forEach(function (x) { writer(x); });
+    arrOfObj.forEach(function (x) { writer(sheet, x); });
     return;
   }
+
+  var entriesToWrite = arrOfObj.filter(function (x) {
+    return !checker(x, this);
+  }, existentEntries);
+  entriesToWrite.forEach(function (x) { writer(sheet, x); });
+  return;
 }
 
 /**
  * creditcard のエントリを書き込む
  */
 function writeCreditcardEntries() {
-  var sheetName = creditcardSheetName;
+  var sheet = getCreditcardSheet();
   var arr = getUniqueCardExpences();
-  Logger.log('-----------------');
-  Logger.log(arr);
 
   /**
    * obj と合致するものが array に含まれているか検査する
@@ -291,8 +278,7 @@ function writeCreditcardEntries() {
    * @param {Sheet} sheet
    * @param {Object} entry
    */
-  function writer(entry) {
-    var sheet = getCreditcardSheet();
+  function writer(sheet, entry) {
     var row = sheet.getLastRow() + 1;
 
     // 締め日
@@ -309,10 +295,8 @@ function writeCreditcardEntries() {
     sheet.getRange(row, 4).setFormula(formula);
     return;
   }
-
-  writeNewEntries(sheetName, arr, checker, writer);
+  writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  var sheet = getCreditcardSheet();
   sheet.getRange(2, 1, sheet.getLastRow(), 4).sort({ column: 1, ascending: false });
 }
