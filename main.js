@@ -1,6 +1,6 @@
 // シート名
 var categorySheetName = 'category';
-var expencesSheetName = 'expences';
+var expencesSheetName = 'expenses';
 var transactionsSheetName = 'transactions';
 var banklistSheetName = 'banklist';
 var dailySheetName = 'daily';
