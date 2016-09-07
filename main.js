@@ -1,6 +1,6 @@
 // シート名
 var categorySheetName = 'category';
-var expencesSheetName = 'expenses';
+var expensesSheetName = 'expenses';
 var transactionsSheetName = 'transactions';
 var banklistSheetName = 'banklist';
 var dailySheetName = 'daily';
@@ -14,10 +14,10 @@ function getCategorySheet() {
   return getCategorySheet.memoSheet;
 }
 
-function getExpencesSheet() {
-  if (getExpencesSheet.memoSheet) { return getExpencesSheet.memoSheet; }
-  getExpencesSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(expencesSheetName);
-  return getExpencesSheet.memoSheet;
+function getExpensesSheet() {
+  if (getExpensesSheet.memoSheet) { return getExpensesSheet.memoSheet; }
+  getExpensesSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(expensesSheetName);
+  return getExpensesSheet.memoSheet;
 }
 
 function getTransactionsSheet() {
@@ -54,7 +54,7 @@ function getCreditcardListSheet() {
 function getSheet(sheetName) {
   var pairs = {};
   pairs[categorySheetName] = getCategorySheet();
-  pairs[expencesSheetName] = getExpencesSheet();
+  pairs[expensesSheetName] = getExpensesSheet();
   pairs[transactionsSheetName] = getTransactionsSheet();
   pairs[banklistSheetName] = getBanklistSheet();
   pairs[dailySheetName] = getDailySheet();
@@ -101,14 +101,14 @@ function getBanks() {
  */
 function onOpen() {
   var categorySheet = getCategorySheet();
-  var expencesSheet = getExpencesSheet();
+  var expensesSheet = getExpensesSheet();
   var transactionsSheet = getTransactionsSheet();
   var banklistSheet = getBanklistSheet();
 
-  // expences シート メインカテゴリ 入力規則を設定する
+  // expenses シート メインカテゴリ 入力規則を設定する
   setValidationMainCategories();
 
-  // expences シートにクレジットカードの入力規則を設定する
+  // expenses シートにクレジットカードの入力規則を設定する
   setValidationCreditcards();
 
   // transactions シートに入力規則を設定する
@@ -134,8 +134,8 @@ function onEdit(e) {
   var row = e.range.getRow();
   var col = e.range.getColumn();
 
-  // expences シートでメインカテゴリを選択
-  if (sheetName === expencesSheetName) {
+  // expenses シートでメインカテゴリを選択
+  if (sheetName === expensesSheetName) {
     if (col === 3) {
       setValidationSubcategories(sheet, row, e.value);
     }
@@ -153,13 +153,13 @@ function onEdit(e) {
   if (sheetName === dailySheetName) {
     if (row === 1 && col === 1) {
       setCategoriesToDailySheet(sheet);
-      setExpencesNotes(sheet, e.value);
+      setExpensesNotes(sheet, e.value);
     }
   }
 }
 
 /**
- * expences シートのメインカテゴリ列に入力規則を設定する
+ * expenses シートのメインカテゴリ列に入力規則を設定する
  * onOpen() で呼び出す
  */
 function setValidationMainCategories() {
@@ -167,14 +167,14 @@ function setValidationMainCategories() {
   var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(mainCategories, true)
     .build();
-  var sheet = getExpencesSheet();
+  var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 3, sheet.getLastRow() + 50);
   column.clearDataValidations();
   column.setDataValidation(rule);
 }
 
 /**
- * expences シートのカード区分列にクレジットカードの入力規則を設定する
+ * expenses シートのカード区分列にクレジットカードの入力規則を設定する
  * onOpen() で呼び出す
  */
 function setValidationCreditcards() {
@@ -182,7 +182,7 @@ function setValidationCreditcards() {
   var rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(cardNames, true)
     .build();
-  var sheet = getExpencesSheet();
+  var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 7, sheet.getLastRow() + 50);
   column.clearDataValidations();
   column.setDataValidation(rule);
@@ -339,12 +339,12 @@ function setCategoriesToDailySheet(sheet) {
 }
 
 /**
- * expences シートからすべてのエントリを取得する
+ * expenses シートからすべてのエントリを取得する
  *
  * @return {array} 
  */
-function getAllExpences() {
-  var sheet = getExpencesSheet();
+function getAllExpenses() {
+  var sheet = getExpensesSheet();
 
   // タイトル行をスキップするため slice(1)
   return sheet.getDataRange().getValues().slice(1);
@@ -366,21 +366,21 @@ function addNote(range, note) {
 }
 
 /**
- * expences シートで入力した店名を daily シートの該当セルにメモとして記載する
+ * expenses シートで入力した店名を daily シートの該当セルにメモとして記載する
  *
  * @param {Sheet} sheet
  * @param {Number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
  */
-function setExpencesNotes(sheet, begin) {
+function setExpensesNotes(sheet, begin) {
   var unixtime = (begin - 25569) * 86400000;
   var beginDate = new Date(unixtime);
   var year = beginDate.getFullYear();
   var month = beginDate.getMonth();
 
-  var allExpences = getAllExpences();
+  var allExpenses = getAllExpenses();
 
   // 年、月が同じエントリのみを抽出する
-  var targetMonthExpences = allExpences.filter(function (row) {
+  var targetMonthExpenses = allExpenses.filter(function (row) {
     return (row[0].getFullYear() === year && row[0].getMonth() === month);
   });
 
@@ -398,11 +398,11 @@ function setExpencesNotes(sheet, begin) {
   var rowIndex = 3;
   var colIndex = 4;
 
-  for (var i = 0; i < targetMonthExpences.length; i++) {
+  for (var i = 0; i < targetMonthExpenses.length; i++) {
 
     // 店名 index 4, 品名 index 5 が入っているか？
-    var shop = targetMonthExpences[i][4];
-    var goods = targetMonthExpences[i][5];
+    var shop = targetMonthExpenses[i][4];
+    var goods = targetMonthExpenses[i][5];
     var note = '';
 
     if (shop && goods) { note = shop + '(' + goods + ')'; }
@@ -410,8 +410,8 @@ function setExpencesNotes(sheet, begin) {
     else if (goods) { note = goods; }
     else { continue; }
 
-    var main = targetMonthExpences[i][2];
-    var sub = targetMonthExpences[i][3];
+    var main = targetMonthExpenses[i][2];
+    var sub = targetMonthExpenses[i][3];
 
     var rowOffset = 0;
     var colOffset = 0;
@@ -427,7 +427,7 @@ function setExpencesNotes(sheet, begin) {
 
     // 日付は初期値が 1 なので -1 する
     // 10 日の場合、必要な offset は 9
-    colOffset = targetMonthExpences[i][0].getDate() - 1;
+    colOffset = targetMonthExpenses[i][0].getDate() - 1;
 
     var targetCell = sheet.getRange(rowIndex + rowOffset, colIndex + colOffset);
     addNote(targetCell, note);

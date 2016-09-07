@@ -36,13 +36,13 @@ function getCreditcardNames() {
 }
 
 /**
- * クレジットカードの expence のリストを取得する
+ * クレジットカードの expense のリストを取得する
  * Suica などを追加するなら、判定処理を変更する必要あり
  *
- * @return {array} creditcardExpences
+ * @return {array} creditcardExpenses
  */
-function getCreditcardExpences() {
-  var allExpences = getAllExpences();
+function getCreditcardExpenses() {
+  var allExpenses = getAllExpenses();
 
   /**
    * クレジットカードかどうか判定する
@@ -60,10 +60,10 @@ function getCreditcardExpences() {
     return result;
   }
 
-  var creditcardExpences = allExpences.filter(function (row) {
+  var creditcardExpenses = allExpenses.filter(function (row) {
     return (row[6] && isCreditcard(row[6]));
   });
-  return creditcardExpences;
+  return creditcardExpenses;
 }
 
 /**
@@ -95,8 +95,8 @@ function getCutoffDate(card, month) {
  * @param {Date} cutoffDate 締め日
  * @return {number} sum
  */
-function getSumOfCreditcardExpences(card, cutoffDate) {
-  var allCardExpences = getCreditcardExpences();
+function getSumOfCreditcardExpenses(card, cutoffDate) {
+  var allCardExpenses = getCreditcardExpenses();
   var cardName = card['name'];
 
   // 前月締め日
@@ -105,19 +105,19 @@ function getSumOfCreditcardExpences(card, cutoffDate) {
 
   // 該当するエントリを抽出
   // [ 日付, 金額, カテゴリ, サブカテゴリ, 店名, 品名, カード区分, 計上日修正 ]
-  var expences = allCardExpences.filter(function (row) {
+  var expenses = allCardExpenses.filter(function (row) {
     return (lastCutoffDate.getTime() < row[0].getTime() && row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName);
   });
 
   var sum = 0;
-  switch (expences.length) {
+  switch (expenses.length) {
     case 0:
       break;
     case 1:
-      sum = expences[0][1];
+      sum = expenses[0][1];
       break;
     default:
-      sum = expences.reduce(function (prev, curr) {
+      sum = expenses.reduce(function (prev, curr) {
         return prev[1] + curr[1];
       });
       break;
@@ -187,9 +187,9 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
  *
  * @return {array} cardName: string, cutoffDateTime: number
  */
-function getUniqueCardExpences() {
-  var expences = getCreditcardExpences();
-  var arr = expences.map(function (row) {
+function getUniqueCardExpenses() {
+  var expenses = getCreditcardExpenses();
+  var arr = expenses.map(function (row) {
     var pDate = row[0];
     var cardName = row[6];
     var card = getCardByName(cardName);
@@ -255,7 +255,7 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
  */
 function writeCreditcardEntries() {
   var sheet = getCreditcardSheet();
-  var arr = getUniqueCardExpences();
+  var arr = getUniqueCardExpenses();
 
   /**
    * obj と合致するものが array に含まれているか検査する
@@ -290,11 +290,11 @@ function writeCreditcardEntries() {
     sheet.getRange(row, 3).setValue(entry['dueDate']);
 
     // 金額を集計
-    // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A3,-1),expences!$A:$A<$A3,expences!$G:$G=$B3))
-    var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' +
-      expencesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
-      expencesSheetName + '!$A:$A<$A' + row + ',' +
-      expencesSheetName + '!$G:$G=$B' + row + '))';
+    // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A3,-1),expenses!$A:$A<$A3,expenses!$G:$G=$B3))
+    var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
+      expensesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
+      expensesSheetName + '!$A:$A<$A' + row + ',' +
+      expensesSheetName + '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
   }
   writeNewEntries(sheet, arr, checker, writer);
@@ -352,12 +352,12 @@ function writeCreditcardWithdrawal() {
     sheet.getRange(row, 3).setValue('要入力');
 
     // いくら
-    // =SUM(FILTER(expences!$B:$B,expences!$A:$A>=edate($A2,-1),expences!$A:$A<$A2,expences!$G:$G=$B2))
+    // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A2,-1),expenses!$A:$A<$A2,expenses!$G:$G=$B2))
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
-    var formula = '=SUM(FILTER(' + expencesSheetName + '!$B:$B,' +
-      expencesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
-      expencesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
-      expencesSheetName + '!$G:$G=$F' + row + '))';
+    var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
+      expensesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
+      expensesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
+      expensesSheetName + '!$G:$G=$F' + row + '))';
     sheet.getRange(row, 5).setFormula(formula);
     sheet.getRange(row, 5).setFontColor('black');
 

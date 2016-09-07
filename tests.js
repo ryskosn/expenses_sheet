@@ -10,11 +10,11 @@ function testOffsetMonth() {
 }
 
 
-function testGetSumOfCreditcardExpences() {
+function testGetSumOfCreditcardExpenses() {
   var cards = getCreditcards();
   var card = cards[0];
   var d = new Date(2016, 7, 15);
-  getSumOfCreditcardExpences(card, d);
+  getSumOfCreditcardExpenses(card, d);
 }
 
 
@@ -38,20 +38,20 @@ function testGetDueDate() {
 
 
 function testGetCardObjByCardName() {
-  var expences = getCreditcardExpences();
-  for (var i = 0; i < expences.length; i++) {
-    Logger.log(expences[i]);
-    var c = expences[i][6];
+  var expenses = getCreditcardExpenses();
+  for (var i = 0; i < expenses.length; i++) {
+    Logger.log(expenses[i]);
+    var c = expenses[i][6];
     getCardObjByCardName(c);
   }
 }
 
 function testGetCutoffDateOfPurchase() {
-  var expences = getCreditcardExpences();
-  for (var i = 0; i < expences.length; i++) {
-    Logger.log(expences[i]);
-    var pDate = expences[i][0]; Logger.log(pDate);
-    var cardName = expences[i][6]; Logger.log(cardName);
+  var expenses = getCreditcardExpenses();
+  for (var i = 0; i < expenses.length; i++) {
+    Logger.log(expenses[i]);
+    var pDate = expenses[i][0]; Logger.log(pDate);
+    var cardName = expenses[i][6]; Logger.log(cardName);
 
     var card = getCardObjByCardName(cardName);
     Logger.log(card);
@@ -91,8 +91,8 @@ function testCheck() {
   Logger.log(objList);
 }
 
-function testGetCreditcardExpences() {
-  getCreditcardExpences();
+function testGetCreditcardExpenses() {
+  getCreditcardexpenses();
 }
 
 function testGetSheet() {
