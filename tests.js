@@ -101,3 +101,11 @@ function testGetSheet() {
   Logger.log(result);
   Logger.log(typeof result);
 }
+
+function testSetExpensesNotes(){
+  var sheet = getDailySheet();
+  var aug = 42583;
+  var sep = 42614;
+  var begin = aug;
+  setExpensesNotes(sheet, begin);
+}
