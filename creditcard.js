@@ -190,7 +190,9 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
 function getUniqueCardExpenses() {
   var expenses = getCreditcardExpenses();
   var arr = expenses.map(function (row) {
-    var pDate = row[0];
+
+    // 計上日修正があればそちらを使う
+    var pDate = row[7] || row[0];
     var cardName = row[6];
     var card = getCardByName(cardName);
     var cutoffDate = getCutoffDateOfPurchase(pDate, card);

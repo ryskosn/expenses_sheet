@@ -9,44 +9,65 @@ var creditcardListSheetName = 'creditcard_list';
 
 // 特定のシートのメモ化
 function getCategorySheet() {
-  if (getCategorySheet.memoSheet) { return getCategorySheet.memoSheet; }
-  getCategorySheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(categorySheetName);
+  if (getCategorySheet.memoSheet) {
+    return getCategorySheet.memoSheet;
+  }
+  getCategorySheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(categorySheetName);
   return getCategorySheet.memoSheet;
 }
 
 function getExpensesSheet() {
-  if (getExpensesSheet.memoSheet) { return getExpensesSheet.memoSheet; }
-  getExpensesSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(expensesSheetName);
+  if (getExpensesSheet.memoSheet) {
+    return getExpensesSheet.memoSheet;
+  }
+  getExpensesSheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(expensesSheetName);
   return getExpensesSheet.memoSheet;
 }
 
 function getTransactionsSheet() {
-  if (getTransactionsSheet.memoSheet) { return getTransactionsSheet.memoSheet; }
-  getTransactionsSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(transactionsSheetName);
+  if (getTransactionsSheet.memoSheet) {
+    return getTransactionsSheet.memoSheet;
+  }
+  getTransactionsSheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(transactionsSheetName);
   return getTransactionsSheet.memoSheet;
 }
 
 function getBanklistSheet() {
-  if (getBanklistSheet.memoSheet) { return getBanklistSheet.memoSheet; }
-  getBanklistSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(banklistSheetName);
+  if (getBanklistSheet.memoSheet) {
+    return getBanklistSheet.memoSheet;
+  }
+  getBanklistSheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(banklistSheetName);
   return getBanklistSheet.memoSheet;
 }
 
 function getDailySheet() {
-  if (getDailySheet.memoSheet) { return getDailySheet.memoSheet; }
-  getDailySheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(dailySheetName);
+  if (getDailySheet.memoSheet) {
+    return getDailySheet.memoSheet;
+  }
+  getDailySheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(dailySheetName);
   return getDailySheet.memoSheet;
 }
 
 function getCreditcardSheet() {
-  if (getCreditcardSheet.memoSheet) { return getCreditcardSheet.memoSheet; }
-  getCreditcardSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(creditcardSheetName);
+  if (getCreditcardSheet.memoSheet) {
+    return getCreditcardSheet.memoSheet;
+  }
+  getCreditcardSheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(creditcardSheetName);
   return getCreditcardSheet.memoSheet;
 }
 
 function getCreditcardListSheet() {
-  if (getCreditcardListSheet.memoSheet) { return getCreditcardListSheet.memoSheet; }
-  getCreditcardListSheet.memoSheet = SpreadsheetApp.getActive().getSheetByName(creditcardListSheetName);
+  if (getCreditcardListSheet.memoSheet) {
+    return getCreditcardListSheet.memoSheet;
+  }
+  getCreditcardListSheet.memoSheet =
+      SpreadsheetApp.getActive().getSheetByName(creditcardListSheetName);
   return getCreditcardListSheet.memoSheet;
 }
 
@@ -65,23 +86,28 @@ function getSheet(sheetName) {
 
 // 特定のリストのメモ化
 function getAllCategories() {
-  if (getAllCategories.memolist) { return getAllCategories.memolist; }
+  if (getAllCategories.memolist) {
+    return getAllCategories.memolist;
+  }
   var sheet = getCategorySheet();
   getAllCategories.memolist = sheet.getDataRange().getValues();
   return getAllCategories.memolist;
 }
 
 function getMainCategories() {
-  if (getMainCategories.memolist) { return getMainCategories.memolist; }
+  if (getMainCategories.memolist) {
+    return getMainCategories.memolist;
+  }
   var allCategories = getAllCategories();
-  getMainCategories.memolist = allCategories.map(function (arr) {
-    return arr[0];
-  });
+  getMainCategories.memolist =
+      allCategories.map(function(arr) { return arr[0]; });
   return getMainCategories.memolist;
 }
 
 function getTransactionTypes() {
-  if (getTransactionTypes.memolist) { return getTransactionTypes.memolist; }
+  if (getTransactionTypes.memolist) {
+    return getTransactionTypes.memolist;
+  }
   var sheet = getBanklistSheet();
   var array = sheet.getDataRange().getValues();
   getTransactionTypes.memolist = array[0].slice(1);
@@ -89,7 +115,9 @@ function getTransactionTypes() {
 }
 
 function getBanks() {
-  if (getBanks.memolist) { return getBanks.memolist; }
+  if (getBanks.memolist) {
+    return getBanks.memolist;
+  }
   var sheet = getBanklistSheet();
   var array = sheet.getDataRange().getValues();
   getBanks.memolist = array[1].slice(1);
@@ -125,7 +153,6 @@ function onOpen() {
  * セルの値を変更したときに実行される
  */
 function onEdit(e) {
-
   // 変更セルの sheet, sheetName
   var sheet = e.source.getActiveSheet();
   var sheetName = sheet.getName();
@@ -134,10 +161,15 @@ function onEdit(e) {
   var row = e.range.getRow();
   var col = e.range.getColumn();
 
-  // expenses シートでメインカテゴリを選択
   if (sheetName === expensesSheetName) {
+    // expenses シートでメインカテゴリを選択
     if (col === 3) {
       setValidationSubcategories(sheet, row, e.value);
+    }
+
+    // expenses シートでデータ追加
+    if (col === 1) {
+      setFormulaOfPurchaseDate(sheet, row, e.value);
     }
   }
 
@@ -165,8 +197,8 @@ function onEdit(e) {
 function setValidationMainCategories() {
   var mainCategories = getMainCategories();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(mainCategories, true)
-    .build();
+                 .requireValueInList(mainCategories, true)
+                 .build();
   var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 3, sheet.getLastRow() + 50);
   column.clearDataValidations();
@@ -180,13 +212,14 @@ function setValidationMainCategories() {
 function setValidationCreditcards() {
   var cardNames = getCreditcardNames();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(cardNames, true)
-    .build();
+                 .requireValueInList(cardNames, true)
+                 .build();
   var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 7, sheet.getLastRow() + 50);
   column.clearDataValidations();
   column.setDataValidation(rule);
 }
+
 /**
  * transactions シートの取引種類列に入力規則を設定する
  * onOpen() で呼び出す
@@ -194,8 +227,8 @@ function setValidationCreditcards() {
 function setValidationTransactionsTypes() {
   var transactionTypes = getTransactionTypes();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(transactionTypes, true)
-    .build();
+                 .requireValueInList(transactionTypes, true)
+                 .build();
   var sheet = getTransactionsSheet();
   var column = sheet.getRange(2, 2, sheet.getLastRow() + 50);
   column.clearDataValidations();
@@ -203,7 +236,8 @@ function setValidationTransactionsTypes() {
 }
 
 /**
- * メインカテゴリを指定すると、D 列にサブカテゴリを要素とした入力規則を設定する。
+ * メインカテゴリを指定すると、D 列にサブカテゴリを
+ * 要素とした入力規則を設定する。
  *
  * @param {Sheet} sheet
  * @param {Number} row
@@ -223,16 +257,37 @@ function setValidationSubcategories(sheet, row, mainCategory) {
 
   for (var i = 0; i < allCategories.length; i++) {
     if (allCategories[i][0] === mainCategory) {
-
       // 入力規則を設定する
       // 配列の最初はメインカテゴリが入るので slice(1) で index 1 以降を取り出す
       var rule = SpreadsheetApp.newDataValidation()
-        .requireValueInList(allCategories[i].slice(1), true)
-        .build();
+                     .requireValueInList(allCategories[i].slice(1), true)
+                     .build();
       subCategoryRange.setDataValidation(rule);
       break;
     }
   }
+}
+
+/**
+ * 新しいデータを追加すると I 列に計上日を求める数式を設定する。
+ *
+ * @param {Sheet} sheet
+ * @param {Number} row
+ * @param {string} date
+ */
+function setFormulaOfPurchaseDate(sheet, row, date) {
+  var cell = sheet.getRange(row, 9);
+
+  // 既存の値を削除した場合は I 列の値を削除する
+  // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
+  if (typeof date === 'object') {
+    cell.clearContent();
+    return;
+  }
+
+  // =IF(ISBLANK(H2),A2,H2)
+  var formula = '=IF(ISBLANK(H' + row + '),A' + row + ',H' + row + ')';
+  cell.setFormula(formula);
 }
 
 /**
@@ -252,8 +307,8 @@ function setValidationTransactions(sheet, row, transactionType) {
   var cash = banks[0];
 
   var banksRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(banks, true)
-    .build();
+                      .requireValueInList(banks, true)
+                      .build();
 
   var from = sheet.getRange(row, 3);
   var to = sheet.getRange(row, 4);
@@ -291,7 +346,7 @@ function setValidationTransactions(sheet, row, transactionType) {
 
 /**
  * transactions シートの転記用セルに関数を設定する
- * 
+ *
  * @param {Sheet} sheet
  * @param {number} row
  */
@@ -300,14 +355,14 @@ function setFormulaOfTransactionComment(sheet, row) {
 
   // =IF(ISBLANK($F8), $B8, CONCATENATE($B8,"(",$F8,")"))
   var formula = '=IF(ISBLANK($F' + row + '),' +
-    '$B' + row + ',' +
-    'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
+      '$B' + row + ',' +
+      'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
   cell.setFormula(formula);
 }
 
 /**
  * daily シートにメインカテゴリ、サブカテゴリを記載する
- * 
+ *
  * @param {Sheet} sheet
  */
 function setCategoriesToDailySheet(sheet) {
@@ -328,9 +383,11 @@ function setCategoriesToDailySheet(sheet) {
 
         //サブカテゴリの行のフォントカラーを変更
         if (allCategories[i][0] !== allCategories[i][j]) {
-          sheet.getRange(row, col, 1, sheet.getMaxColumns()).setFontColor('gray');
+          sheet.getRange(row, col, 1, sheet.getMaxColumns())
+              .setFontColor('gray');
         } else {
-          sheet.getRange(row, col, 1, sheet.getMaxColumns()).setFontColor('black');
+          sheet.getRange(row, col, 1, sheet.getMaxColumns())
+              .setFontColor('black');
         }
         row++;
       }
@@ -341,7 +398,7 @@ function setCategoriesToDailySheet(sheet) {
 /**
  * expenses シートからすべてのエントリを取得する
  *
- * @return {array} 
+ * @return {array}
  */
 function getAllExpenses() {
   var sheet = getExpensesSheet();
@@ -380,17 +437,18 @@ function setExpensesNotes(sheet, begin) {
   var allExpenses = getAllExpenses();
 
   // 年、月が同じエントリのみを抽出する
-  var targetMonthExpenses = allExpenses.filter(function (row) {
+  var targetMonthExpenses = allExpenses.filter(function(row) {
     return (row[0].getFullYear() === year && row[0].getMonth() === month);
   });
 
   sheet.getDataRange().clearNote();
 
   // daily シート B3 から下のリスト
-  var categoriesArray = sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
+  var categoriesArray =
+      sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
 
   // 2 次元配列を flatten
-  var categories = categoriesArray.reduce(function (prev, curr) {
+  var categories = categoriesArray.reduce(function(prev, curr) {
     return prev.concat(curr);
   });
 
@@ -399,16 +457,20 @@ function setExpensesNotes(sheet, begin) {
   var colIndex = 4;
 
   for (var i = 0; i < targetMonthExpenses.length; i++) {
-
     // 店名 index 4, 品名 index 5 が入っているか？
     var shop = targetMonthExpenses[i][4];
     var goods = targetMonthExpenses[i][5];
     var note = '';
 
-    if (shop && goods) { note = shop + '(' + goods + ')'; }
-    else if (shop) { note = shop; }
-    else if (goods) { note = goods; }
-    else { continue; }
+    if (shop && goods) {
+      note = shop + '(' + goods + ')';
+    } else if (shop) {
+      note = shop;
+    } else if (goods) {
+      note = goods;
+    } else {
+      continue;
+    }
 
     var main = targetMonthExpenses[i][2];
     var sub = targetMonthExpenses[i][3];
