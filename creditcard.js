@@ -293,10 +293,10 @@ function writeCreditcardEntries() {
     sheet.getRange(row, 3).setValue(entry['dueDate']);
 
     // 金額を集計
-    // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A3,-1),expenses!$A:$A<$A3,expenses!$G:$G=$B3))
+    // =SUM(FILTER(expenses!$B:$B,expenses!$I:$I>=edate($A3,-1),expenses!$I:$I<$A3,expenses!$G:$G=$B3))
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
-        expensesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
-        expensesSheetName + '!$A:$A<$A' + row + ',' + expensesSheetName +
+        expensesSheetName + '!$I:$I>=edate($A' + row + ',-1),' +
+        expensesSheetName + '!$I:$I<$A' + row + ',' + expensesSheetName +
         '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
   }
@@ -323,6 +323,7 @@ function writeCreditcardWithdrawal() {
     };
   });
   Logger.log(arr);
+
   /**
    * obj と合致するものが array に含まれているか検査する
    *
@@ -359,11 +360,11 @@ function writeCreditcardWithdrawal() {
     sheet.getRange(row, 3).setValue('要入力');
 
     // いくら
-    // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A2,-1),expenses!$A:$A<$A2,expenses!$G:$G=$B2))
+    // =SUM(FILTER(expenses!$B:$B,expenses!$I:$I>=edate($A2,-1),expenses!$I:$I<$A2,expenses!$G:$G=$B2))
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
-        expensesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
-        expensesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
+        expensesSheetName + '!$I:$I>=edate(' + cutoffDateStr + ',-1),' +
+        expensesSheetName + '!$I:$I<' + cutoffDateStr + ',' +
         expensesSheetName + '!$G:$G=$F' + row + '))';
     sheet.getRange(row, 5).setFormula(formula);
     sheet.getRange(row, 5).setFontColor('black');

@@ -133,7 +133,7 @@ function onOpen() {
   var transactionsSheet = getTransactionsSheet();
   var banklistSheet = getBanklistSheet();
 
-  // expenses シート メインカテゴリ 入力規則を設定する
+  // expenses シートにメインカテゴリ 入力規則を設定する
   setValidationMainCategories();
 
   // expenses シートにクレジットカードの入力規則を設定する
@@ -141,6 +141,10 @@ function onOpen() {
 
   // transactions シートに入力規則を設定する
   setValidationTransactionsTypes();
+
+  // expenses シート、transactions シートをソート、空白行の中身を削除
+  clearContentsOfBlankCells(expensesSheet, 1);
+  clearContentsOfBlankCells(transactionsSheet, 1);
 
   // クレジットカードの集計結果を入力する
   writeCreditcardEntries();
@@ -177,7 +181,7 @@ function onEdit(e) {
   if (sheetName === transactionsSheetName) {
     if (col === 2) {
       setValidationTransactions(sheet, row, e.value);
-      setFormulaOfTransactionComment(sheet, row);
+      setFormulaOfTransactionComment(sheet, row, e.value);
     }
   }
 
@@ -233,6 +237,32 @@ function setValidationTransactionsTypes() {
   var column = sheet.getRange(2, 2, sheet.getLastRow() + 50);
   column.clearDataValidations();
   column.setDataValidation(rule);
+}
+
+/**
+ * 空白行のセルに入っている数式などを削除する
+ * @param {Sheet} sheet
+ * @param {Number} col 空白行かどうか判定する列
+ * onOpen() で呼び出す
+ */
+function clearContentsOfBlankCells(sheet, col) {
+  var maxRow = sheet.getMaxRows();
+  var maxCol = sheet.getMaxColumns();
+
+  // sort する
+  sheet.getRange(2, 1, maxRow - 1, maxCol)
+      .sort({column: col, ascending: true});
+
+  var firstBlankRow = 2;
+  for (var i = 2; i < maxRow; i++) {
+    if (sheet.getRange(i, col).isBlank()) {
+      firstBlankRow = i;
+      break;
+    }
+  }
+  var range =
+      sheet.getRange(firstBlankRow, 1, maxRow - firstBlankRow + 1, maxCol);
+  range.clearContent();
 }
 
 /**
@@ -349,9 +379,17 @@ function setValidationTransactions(sheet, row, transactionType) {
  *
  * @param {Sheet} sheet
  * @param {number} row
+ * @param {string} date
  */
-function setFormulaOfTransactionComment(sheet, row) {
+function setFormulaOfTransactionComment(sheet, row, date) {
   var cell = sheet.getRange(row, 7);
+
+  // 既存の値を削除した場合は G 列の値を削除する
+  // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
+  if (typeof date === 'object') {
+    cell.clearContent();
+    return;
+  }
 
   // =IF(ISBLANK($F8), $B8, CONCATENATE($B8,"(",$F8,")"))
   var formula = '=IF(ISBLANK($F' + row + '),' +
