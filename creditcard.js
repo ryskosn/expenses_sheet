@@ -9,10 +9,10 @@ function getCreditcards() {
 
   // タイトル行をスキップするため slice(1)
   var arr = sheet.getDataRange().getValues().slice(1);
-  var creditcards = arr.map(function (row) {
+  var creditcards = arr.map(function(row) {
     var card = new Object();
 
-    // [ 名前, 締め日（月末なら 0）, 支払月（翌月なら 1）, 支払日 ] 
+    // [ 名前, 締め日（月末なら 0）, 支払月（翌月なら 1）, 支払日 ]
     card['name'] = row[0];
     card['cutoffDate'] = row[1];
     card['dueMonth'] = row[2];
@@ -29,9 +29,7 @@ function getCreditcards() {
  */
 function getCreditcardNames() {
   var creditcards = getCreditcards();
-  var cardNames = creditcards.map(function (card) {
-    return card['name'];
-  });
+  var cardNames = creditcards.map(function(card) { return card['name']; });
   return cardNames;
 }
 
@@ -54,13 +52,11 @@ function getCreditcardExpenses() {
       'Suica',
       'nanaco',
     ];
-    var result = others.every(function (x) {
-      return (x !== cardName);
-    });
+    var result = others.every(function(x) { return (x !== cardName); });
     return result;
   }
 
-  var creditcardExpenses = allExpenses.filter(function (row) {
+  var creditcardExpenses = allExpenses.filter(function(row) {
     return (row[6] && isCreditcard(row[6]));
   });
   return creditcardExpenses;
@@ -74,7 +70,6 @@ function getCreditcardExpenses() {
  * @return {Date} cutoffDate
  */
 function getCutoffDate(card, month) {
-
   // 締め日
   var cutoffDate = new Date();
   cutoffDate.setMonth(month);
@@ -105,8 +100,10 @@ function getSumOfCreditcardExpenses(card, cutoffDate) {
 
   // 該当するエントリを抽出
   // [ 日付, 金額, カテゴリ, サブカテゴリ, 店名, 品名, カード区分, 計上日修正 ]
-  var expenses = allCardExpenses.filter(function (row) {
-    return (lastCutoffDate.getTime() < row[0].getTime() && row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName);
+  var expenses = allCardExpenses.filter(function(row) {
+    return (
+        lastCutoffDate.getTime() < row[0].getTime() &&
+        row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName);
   });
 
   var sum = 0;
@@ -117,9 +114,7 @@ function getSumOfCreditcardExpenses(card, cutoffDate) {
       sum = expenses[0][1];
       break;
     default:
-      sum = expenses.reduce(function (prev, curr) {
-        return prev[1] + curr[1];
-      });
+      sum = expenses.reduce(function(prev, curr) { return prev[1] + curr[1]; });
       break;
   }
   return sum;
@@ -152,9 +147,8 @@ function getDueDate(card, cutoffDate) {
  */
 function getCardByName(cardName) {
   var cards = getCreditcards();
-  var purchaseCard = cards.filter(function (card) {
-    return (card['name'] === cardName);
-  });
+  var purchaseCard =
+      cards.filter(function(card) { return (card['name'] === cardName); });
   return purchaseCard[0];
 }
 
@@ -163,7 +157,7 @@ function getCardByName(cardName) {
  *
  * @param {Date} purchaseDate 購入エントリの日付
  * @param {Object} card
- * @return {Date} 
+ * @return {Date}
  */
 function getCutoffDateOfPurchase(purchaseDate, card) {
   var pm = purchaseDate.getMonth();
@@ -178,7 +172,8 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
     cutoffDate = offsetMonth(cutoffDate, 1);
     cutoffDate.setHours(23, 59, 59, 0);
   }
-  Logger.log('cutoffDate:'); Logger.log(cutoffDate);
+  Logger.log('cutoffDate:');
+  Logger.log(cutoffDate);
   return cutoffDate;
 }
 
@@ -189,7 +184,7 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
  */
 function getUniqueCardExpenses() {
   var expenses = getCreditcardExpenses();
-  var arr = expenses.map(function (row) {
+  var arr = expenses.map(function(row) {
 
     // 計上日修正があればそちらを使う
     var pDate = row[7] || row[0];
@@ -206,7 +201,7 @@ function getUniqueCardExpenses() {
   });
 
   // cardName, cutoffDateTime でソート
-  arr.sort(function (a, b) {
+  arr.sort(function(a, b) {
     if (a.cardName < b.cardName) return -1;
     if (a.cardName > b.cardName) return 1;
     if (a.cutoffDateTime < b.cutoffDateTime) return -1;
@@ -214,16 +209,21 @@ function getUniqueCardExpenses() {
   });
 
   // 重複を除外 null or undefined が入る場合がある？
-  arr = arr.map(function (x, i, self) {
-    if (i === 0) { return x; }
-    else if (x.cardName === self[i - 1].cardName) {
-      if (x.cutoffDateTime !== self[i - 1].cutoffDateTime) { return x; }
-    } else { return x; }
+  arr = arr.map(function(x, i, self) {
+    if (i === 0) {
+      return x;
+    } else if (x.cardName === self[i - 1].cardName) {
+      if (x.cutoffDateTime !== self[i - 1].cutoffDateTime) {
+        return x;
+      }
+    } else {
+      return x;
+    }
   });
 
   // null, undefined を除外する
-  arr = arr.filter(function (x) {
-    if (x) { return x; }
+  arr = arr.filter(function(x) {
+    if (x) return x;
   });
   return arr;
 }
@@ -240,15 +240,15 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
   var existentEntries = sheet.getDataRange().getValues().slice(1);
 
   if (existentEntries === []) {
-    arrOfObj.forEach(function (x) { writer(sheet, x); });
+    arrOfObj.forEach(function(x) { writer(sheet, x); });
     return;
   }
 
-  var entriesToWrite = arrOfObj.filter(function (x) {
+  var entriesToWrite = arrOfObj.filter(function(x) {
     return !checker(x, this);
   }, existentEntries);
 
-  entriesToWrite.forEach(function (x) { writer(sheet, x); });
+  entriesToWrite.forEach(function(x) { writer(sheet, x); });
   return;
 }
 
@@ -261,21 +261,22 @@ function writeCreditcardEntries() {
 
   /**
    * obj と合致するものが array に含まれているか検査する
-   * 
+   *
    * @param {Object} obj
    * @param {array} array
    * @return {boolean} 含まれていたら true を返す
    */
   function checker(obj, array) {
-    var result = array.some(function (x) {
-      return (obj['cutoffDateTime'] === x[0].getTime() && obj['cardName'] === x[1]);
+    var result = array.some(function(x) {
+      return (
+          obj['cutoffDateTime'] === x[0].getTime() && obj['cardName'] === x[1]);
     });
     return result;
   }
 
   /**
    * シートに書き込む
-   * 
+   *
    * @param {Sheet} sheet
    * @param {Object} entry
    */
@@ -294,15 +295,16 @@ function writeCreditcardEntries() {
     // 金額を集計
     // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A3,-1),expenses!$A:$A<$A3,expenses!$G:$G=$B3))
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
-      expensesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
-      expensesSheetName + '!$A:$A<$A' + row + ',' +
-      expensesSheetName + '!$G:$G=$B' + row + '))';
+        expensesSheetName + '!$A:$A>=edate($A' + row + ',-1),' +
+        expensesSheetName + '!$A:$A<$A' + row + ',' + expensesSheetName +
+        '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
   }
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  sheet.getRange(2, 1, sheet.getLastRow(), 4).sort({ column: 1, ascending: false });
+  sheet.getRange(2, 1, sheet.getLastRow(), 4)
+      .sort({column: 1, ascending: false});
 }
 
 /**
@@ -310,8 +312,9 @@ function writeCreditcardEntries() {
  */
 function writeCreditcardWithdrawal() {
   var sheet = getTransactionsSheet();
-  var creditcardEntries = getCreditcardSheet().getDataRange().getValues().slice(1);
-  var arr = creditcardEntries.map(function (row) {
+  var creditcardEntries =
+      getCreditcardSheet().getDataRange().getValues().slice(1);
+  var arr = creditcardEntries.map(function(row) {
     return {
       'cutoffDate': row[0],
       'cardName': row[1],
@@ -322,21 +325,23 @@ function writeCreditcardWithdrawal() {
   Logger.log(arr);
   /**
    * obj と合致するものが array に含まれているか検査する
-   * 
+   *
    * @param {Object} obj
    * @param {array} array
    * @return {boolean} 含まれていたら true を返す
    */
   function checker(obj, array) {
-    var result = array.some(function (x) {
-      return (obj['dueDateTime'] === x[0].getTime() && x[1] === '引落' && obj['cardName'] === x[5]);
+    var result = array.some(function(x) {
+      return (
+          obj['dueDateTime'] === x[0].getTime() && x[1] === '引落' &&
+          obj['cardName'] === x[5]);
     });
     return result;
   }
 
   /**
    * シートに書き込む
-   * 
+   *
    * @param {Sheet} sheet
    * @param {Object} entry
    */
@@ -357,9 +362,9 @@ function writeCreditcardWithdrawal() {
     // =SUM(FILTER(expenses!$B:$B,expenses!$A:$A>=edate($A2,-1),expenses!$A:$A<$A2,expenses!$G:$G=$B2))
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
-      expensesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
-      expensesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
-      expensesSheetName + '!$G:$G=$F' + row + '))';
+        expensesSheetName + '!$A:$A>=edate(' + cutoffDateStr + ',-1),' +
+        expensesSheetName + '!$A:$A<' + cutoffDateStr + ',' +
+        expensesSheetName + '!$G:$G=$F' + row + '))';
     sheet.getRange(row, 5).setFormula(formula);
     sheet.getRange(row, 5).setFontColor('black');
 
@@ -370,5 +375,6 @@ function writeCreditcardWithdrawal() {
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  sheet.getRange(2, 1, sheet.getLastRow(), 7).sort({ column: 1, ascending: true });
+  sheet.getRange(2, 1, sheet.getLastRow(), 7)
+      .sort({column: 1, ascending: true});
 }
