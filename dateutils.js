@@ -36,6 +36,7 @@ function isJapaneseHoliday(year, month, date) {
   endDate.setHours(23, 59, 59, 999);
 
   var cal = CalendarApp.getCalendarById('ja.japanese#holiday@group.v.calendar.google.com');
+  Utilities.sleep(1000);
   var holidays = cal.getEvents(startDate, endDate);
 
   return holidays.length != 0;
