@@ -442,7 +442,13 @@ function getAllExpenses() {
   var sheet = getExpensesSheet();
 
   // タイトル行をスキップするため slice(1)
-  return sheet.getDataRange().getValues().slice(1);
+  var arr = sheet.getDataRange().getValues().slice(1);
+
+  // null, undefined を除外する
+  arr = arr.filter(function (x) {
+    if (x) { return x; }
+  });
+  return arr;
 }
 
 /**
@@ -479,8 +485,6 @@ function setExpensesNotes(sheet, begin) {
     return (row[0].getFullYear() === year && row[0].getMonth() === month);
   });
 
-  sheet.getDataRange().clearNote();
-
   // daily シート B3 から下のリスト
   var categoriesArray =
       sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
@@ -489,6 +493,8 @@ function setExpensesNotes(sheet, begin) {
   var categories = categoriesArray.reduce(function(prev, curr) {
     return prev.concat(curr);
   });
+
+  sheet.getDataRange().clearNote();
 
   // 対象セルの初期値は D3
   var rowIndex = 3;
