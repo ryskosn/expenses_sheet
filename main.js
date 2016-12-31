@@ -155,6 +155,8 @@ function onOpen() {
 
 /**
  * セルの値を変更したときに実行される
+ *
+ * @param {object} e event object
  */
 function onEdit(e) {
   // 変更セルの sheet, sheetName
@@ -241,9 +243,10 @@ function setValidationTransactionsTypes() {
 
 /**
  * 空白行のセルに入っている数式などを削除する
- * @param {Sheet} sheet
- * @param {Number} col 空白行かどうか判定する列
  * onOpen() で呼び出す
+ *
+ * @param {Sheet} sheet
+ * @param {number} col 空白行かどうか判定する列
  */
 function clearContentsOfBlankCells(sheet, col) {
   var maxRow = sheet.getMaxRows();
@@ -270,8 +273,8 @@ function clearContentsOfBlankCells(sheet, col) {
  * 要素とした入力規則を設定する。
  *
  * @param {Sheet} sheet
- * @param {Number} row
- * @param {String} mainCategory
+ * @param {number} row
+ * @param {string} mainCategory
  */
 function setValidationSubcategories(sheet, row, mainCategory) {
   var allCategories = getAllCategories();
@@ -302,7 +305,7 @@ function setValidationSubcategories(sheet, row, mainCategory) {
  * 新しいデータを追加すると I 列に計上日を求める数式を設定する。
  *
  * @param {Sheet} sheet
- * @param {Number} row
+ * @param {number} row
  * @param {string} date
  */
 function setFormulaOfPurchaseDate(sheet, row, date) {
@@ -324,8 +327,8 @@ function setFormulaOfPurchaseDate(sheet, row, date) {
  * 取引種類を指定すると、それに応じて入力規則、値を設定する。
  *
  * @param {Sheet} sheet
- * @param {Number} row
- * @param {String} transactionType
+ * @param {number} row
+ * @param {string} transactionType
  */
 function setValidationTransactions(sheet, row, transactionType) {
   var transactionTypes = getTransactionTypes();
@@ -470,7 +473,7 @@ function addNote(range, note) {
  * expenses シートで入力した店名を daily シートの該当セルにメモとして記載する
  *
  * @param {Sheet} sheet
- * @param {Number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
+ * @param {number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
  */
 function setExpensesNotes(sheet, begin) {
   var unixtime = (begin - 25569) * 86400000;
