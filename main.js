@@ -167,23 +167,35 @@ function onEdit(e) {
   var row = e.range.getRow();
   var col = e.range.getColumn();
 
+  // expenses シート
   if (sheetName === expensesSheetName) {
-    // expenses シートでメインカテゴリを選択
+    // メインカテゴリを選択時にサブカテゴリの入力規則を設定
     if (col === 3) {
       setValidationSubcategories(sheet, row, e.value);
     }
 
-    // expenses シートでデータ追加
-    if (col === 1) {
+    // データ追加時に形状日の計算式を設定
+    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 9).isBlank()) {
       setFormulaOfPurchaseDate(sheet, row, e.value);
     }
   }
 
-  // transactions シートで取引種類を選択
+  // transactions シート
   if (sheetName === transactionsSheetName) {
+
+    // 取引種類を選択時に「どこから」「どこへ」の入力規則を設定
     if (col === 2) {
       setValidationTransactions(sheet, row, e.value);
+    }
+
+    // 転記用の計算式を設定
+    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 7).isBlank()) {
       setFormulaOfTransactionComment(sheet, row, e.value);
+    }
+
+    // 月間内訳での集計用の計算式を設定
+    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 8).isBlank()) {
+      setFormulaOfTransactionCommentLeft(sheet, row, e.value);
     }
   }
 
@@ -400,6 +412,29 @@ function setFormulaOfTransactionComment(sheet, row, date) {
     'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
   cell.setFormula(formula);
 }
+
+/**
+ * transactions シートの月間内訳集計用セルに関数を設定する
+ *
+ * @param {Sheet} sheet
+ * @param {number} row
+ * @param {string} date
+ */
+function setFormulaOfTransactionCommentLeft(sheet, row, date) {
+  var cell = sheet.getRange(row, 8);
+
+  // 既存の値を削除した場合は G 列の値を削除する
+  // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
+  if (typeof date === 'object') {
+    cell.clearContent();
+    return;
+  }
+
+  // =LEFT($F95,2)
+  var formula = '=LEFT($F' + row + ',2)'
+  cell.setFormula(formula);
+}
+
 
 /**
  * daily シートにメインカテゴリ、サブカテゴリを記載する
