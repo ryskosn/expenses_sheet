@@ -394,14 +394,14 @@ function setValidationTransactions(sheet, row, transactionType) {
  *
  * @param {Sheet} sheet
  * @param {number} row
- * @param {string} date
+ * @param {string} value
  */
-function setFormulaOfTransactionComment(sheet, row, date) {
+function setFormulaOfTransactionComment(sheet, row, value) {
   var cell = sheet.getRange(row, 7);
 
   // 既存の値を削除した場合は G 列の値を削除する
   // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
-  if (typeof date === 'object') {
+  if (typeof value === 'object') {
     cell.clearContent();
     return;
   }
@@ -418,14 +418,14 @@ function setFormulaOfTransactionComment(sheet, row, date) {
  *
  * @param {Sheet} sheet
  * @param {number} row
- * @param {string} date
+ * @param {string} value
  */
-function setFormulaOfTransactionCommentLeft(sheet, row, date) {
+function setFormulaOfTransactionCommentLeft(sheet, row, value) {
   var cell = sheet.getRange(row, 8);
 
   // 既存の値を削除した場合は G 列の値を削除する
   // 値を削除した場合、e.value に {'oldValue': 'hoge'} が入る
-  if (typeof date === 'object') {
+  if (typeof value === 'object') {
     cell.clearContent();
     return;
   }
