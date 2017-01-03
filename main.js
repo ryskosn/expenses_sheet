@@ -204,7 +204,56 @@ function onEdit(e) {
     if (row === 1 && col === 1) {
       setCategoriesToDailySheet(sheet);
       setExpensesNotes(sheet, e.value);
+      setFormulaOfDailySheetSum(sheet, e.value);
     }
+  }
+}
+
+/**
+ * daily シートで集計月の日数に合わせて sum 関数を設定する
+ *
+ * @param {object} sheet
+ * @param {string} dateSerial
+ */
+function setFormulaOfDailySheetSum(sheet, dateSerial) {
+
+  // 月の最終日を求める
+  var unixtime = (dateSerial - 25569) * 86400000;
+  var date = new Date(unixtime);
+  date.setMonth(date.getMonth() + 1);
+  date.setDate(0);
+  var lastDate = date.getDate();
+
+  // var m = Date.parse(date);
+  // m.setMonth(m.getMonth() + 1);
+  // m.setDate(0);
+  // var lastDate = m.getDate();
+
+  var lastCol = '';
+  switch (lastDate) {
+    case 28:
+      lastCol = 'AE';
+      break;
+    case 29:
+      lastCol = 'AF';
+      break;
+    case 30:
+      lastCol = 'AG';
+      break;
+    case 31:
+      lastCol = 'AH';
+      break;
+  }
+
+  // 計算式を設定する範囲を指定
+  var row = 3;
+  var col = 3;
+  sheet.getRange(row, col, sheet.getLastRow()).clearContent();
+
+  // =sum($D4:$AH4)
+  for (row = 3; row <= sheet.getLastRow(); row++) {
+    var formula = '=SUM($D' + row + ':$' + lastCol + row + ')';
+    sheet.getRange(row, col).setFormula(formula);
   }
 }
 
@@ -431,7 +480,7 @@ function setFormulaOfTransactionCommentLeft(sheet, row, value) {
   }
 
   // =LEFT($F95,2)
-  var formula = '=LEFT($F' + row + ',2)'
+  var formula = '=LEFT($F' + row + ', 2)'
   cell.setFormula(formula);
 }
 
