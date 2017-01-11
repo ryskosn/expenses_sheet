@@ -29,8 +29,7 @@ function getCreditcards() {
  */
 function getCreditcardNames() {
   var creditcards = getCreditcards();
-  var cardNames = creditcards.map(function(card) { return card['name']; });
-  return cardNames;
+  return creditcards.map(function(card) { return card['name']; });
 }
 
 /**
@@ -52,8 +51,7 @@ function getCreditcardExpenses() {
       'Suica',
       'nanaco',
     ];
-    var result = others.every(function(x) { return (x !== cardName); });
-    return result;
+    return others.every(function(x) { return (x !== cardName); });
   }
 
   var creditcardExpenses = allExpenses.filter(function(row) {
