@@ -13,7 +13,7 @@ function getCategorySheet() {
     return getCategorySheet.memoSheet;
   }
   getCategorySheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(categorySheetName);
+      SpreadsheetApp.getActive().getSheetByName(categorySheetName);
   return getCategorySheet.memoSheet;
 }
 
@@ -22,7 +22,7 @@ function getExpensesSheet() {
     return getExpensesSheet.memoSheet;
   }
   getExpensesSheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(expensesSheetName);
+      SpreadsheetApp.getActive().getSheetByName(expensesSheetName);
   return getExpensesSheet.memoSheet;
 }
 
@@ -31,7 +31,7 @@ function getTransactionsSheet() {
     return getTransactionsSheet.memoSheet;
   }
   getTransactionsSheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(transactionsSheetName);
+      SpreadsheetApp.getActive().getSheetByName(transactionsSheetName);
   return getTransactionsSheet.memoSheet;
 }
 
@@ -40,7 +40,7 @@ function getBanklistSheet() {
     return getBanklistSheet.memoSheet;
   }
   getBanklistSheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(banklistSheetName);
+      SpreadsheetApp.getActive().getSheetByName(banklistSheetName);
   return getBanklistSheet.memoSheet;
 }
 
@@ -49,7 +49,7 @@ function getDailySheet() {
     return getDailySheet.memoSheet;
   }
   getDailySheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(dailySheetName);
+      SpreadsheetApp.getActive().getSheetByName(dailySheetName);
   return getDailySheet.memoSheet;
 }
 
@@ -58,7 +58,7 @@ function getCreditcardSheet() {
     return getCreditcardSheet.memoSheet;
   }
   getCreditcardSheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(creditcardSheetName);
+      SpreadsheetApp.getActive().getSheetByName(creditcardSheetName);
   return getCreditcardSheet.memoSheet;
 }
 
@@ -67,7 +67,7 @@ function getCreditcardListSheet() {
     return getCreditcardListSheet.memoSheet;
   }
   getCreditcardListSheet.memoSheet =
-    SpreadsheetApp.getActive().getSheetByName(creditcardListSheetName);
+      SpreadsheetApp.getActive().getSheetByName(creditcardListSheetName);
   return getCreditcardListSheet.memoSheet;
 }
 
@@ -100,7 +100,7 @@ function getMainCategories() {
   }
   var allCategories = getAllCategories();
   getMainCategories.memolist =
-    allCategories.map(function (arr) { return arr[0]; });
+      allCategories.map(function(arr) { return arr[0]; });
   return getMainCategories.memolist;
 }
 
@@ -174,27 +174,29 @@ function onEdit(e) {
       setValidationSubcategories(sheet, row, e.value);
     }
 
-    // データ追加時に形状日の計算式を設定
-    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 9).isBlank()) {
+    // データ追加時に計上日の計算式を設定
+    if (!(sheet.getRange(row, 1).isBlank()) &&
+        sheet.getRange(row, 9).isBlank()) {
       setFormulaOfPurchaseDate(sheet, row, e.value);
     }
   }
 
   // transactions シート
   if (sheetName === transactionsSheetName) {
-
     // 取引種類を選択時に「どこから」「どこへ」の入力規則を設定
     if (col === 2) {
       setValidationTransactions(sheet, row, e.value);
     }
 
     // 転記用の計算式を設定
-    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 7).isBlank()) {
+    if (!(sheet.getRange(row, 1).isBlank()) &&
+        sheet.getRange(row, 7).isBlank()) {
       setFormulaOfTransactionComment(sheet, row, e.value);
     }
 
     // 月間内訳での集計用の計算式を設定
-    if (!(sheet.getRange(row, 1).isBlank()) && sheet.getRange(row, 8).isBlank()) {
+    if (!(sheet.getRange(row, 1).isBlank()) &&
+        sheet.getRange(row, 8).isBlank()) {
       setFormulaOfTransactionCommentLeft(sheet, row, e.value);
     }
   }
@@ -215,8 +217,8 @@ function onEdit(e) {
 function setValidationMainCategories() {
   var mainCategories = getMainCategories();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(mainCategories, true)
-    .build();
+                 .requireValueInList(mainCategories, true)
+                 .build();
   var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 3, sheet.getLastRow() + 50);
   column.clearDataValidations();
@@ -230,8 +232,8 @@ function setValidationMainCategories() {
 function setValidationCreditcards() {
   var cardNames = getCreditcardNames();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(cardNames, true)
-    .build();
+                 .requireValueInList(cardNames, true)
+                 .build();
   var sheet = getExpensesSheet();
   var column = sheet.getRange(2, 7, sheet.getLastRow() + 50);
   column.clearDataValidations();
@@ -245,8 +247,8 @@ function setValidationCreditcards() {
 function setValidationTransactionsTypes() {
   var transactionTypes = getTransactionTypes();
   var rule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(transactionTypes, true)
-    .build();
+                 .requireValueInList(transactionTypes, true)
+                 .build();
   var sheet = getTransactionsSheet();
   var column = sheet.getRange(2, 2, sheet.getLastRow() + 50);
   column.clearDataValidations();
@@ -265,8 +267,7 @@ function clearContentsOfBlankCells(sheet, col) {
   var maxCol = sheet.getMaxColumns();
 
   // sort する
-  sheet.getRange(2, 1, maxRow - 1, maxCol)
-    .sort({ column: col, ascending: true });
+  sheet.getRange(2, 1, maxRow - 1, maxCol).sort({column: col, ascending: true});
 
   var firstBlankRow = 2;
   for (var i = 2; i < maxRow; i++) {
@@ -276,7 +277,7 @@ function clearContentsOfBlankCells(sheet, col) {
     }
   }
   var range =
-    sheet.getRange(firstBlankRow, 1, maxRow - firstBlankRow + 1, maxCol);
+      sheet.getRange(firstBlankRow, 1, maxRow - firstBlankRow + 1, maxCol);
   range.clearContent();
 }
 
@@ -305,8 +306,8 @@ function setValidationSubcategories(sheet, row, mainCategory) {
       // 入力規則を設定する
       // 配列の最初はメインカテゴリが入るので slice(1) で index 1 以降を取り出す
       var rule = SpreadsheetApp.newDataValidation()
-        .requireValueInList(allCategories[i].slice(1), true)
-        .build();
+                     .requireValueInList(allCategories[i].slice(1), true)
+                     .build();
       subCategoryRange.setDataValidation(rule);
       break;
     }
@@ -352,8 +353,8 @@ function setValidationTransactions(sheet, row, transactionType) {
   var cash = banks[0];
 
   var banksRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(banks, true)
-    .build();
+                      .requireValueInList(banks, true)
+                      .build();
 
   var from = sheet.getRange(row, 3);
   var to = sheet.getRange(row, 4);
@@ -408,8 +409,8 @@ function setFormulaOfTransactionComment(sheet, row, date) {
 
   // =IF(ISBLANK($F8), $B8, CONCATENATE($B8,"(",$F8,")"))
   var formula = '=IF(ISBLANK($F' + row + '),' +
-    '$B' + row + ',' +
-    'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
+      '$B' + row + ',' +
+      'CONCATENATE($B' + row + ',"(",$F' + row + ',")"))';
   cell.setFormula(formula);
 }
 
@@ -431,8 +432,7 @@ function setFormulaOfTransactionCommentLeft(sheet, row, date) {
   }
 
   // =LEFT($F95,2)
-  var formula = '=LEFT($F' + row + ',2)'
-  cell.setFormula(formula);
+  var formula = '=LEFT($F' + row + ',2)' cell.setFormula(formula);
 }
 
 
@@ -460,10 +460,10 @@ function setCategoriesToDailySheet(sheet) {
         //サブカテゴリの行のフォントカラーを変更
         if (allCategories[i][0] !== allCategories[i][j]) {
           sheet.getRange(row, col, 1, sheet.getMaxColumns())
-            .setFontColor('gray');
+              .setFontColor('gray');
         } else {
           sheet.getRange(row, col, 1, sheet.getMaxColumns())
-            .setFontColor('black');
+              .setFontColor('black');
         }
         row++;
       }
@@ -483,8 +483,10 @@ function getAllExpenses() {
   var arr = sheet.getDataRange().getValues().slice(1);
 
   // null, undefined を除外する
-  arr = arr.filter(function (x) {
-    if (x) { return x; }
+  arr = arr.filter(function(x) {
+    if (x) {
+      return x;
+    }
   });
   return arr;
 }
@@ -519,16 +521,16 @@ function setExpensesNotes(sheet, begin) {
   var allExpenses = getAllExpenses();
 
   // 年、月が同じエントリのみを抽出する
-  var targetMonthExpenses = allExpenses.filter(function (row) {
+  var targetMonthExpenses = allExpenses.filter(function(row) {
     return (row[0].getFullYear() === year && row[0].getMonth() === month);
   });
 
   // daily シート B3 から下のリスト
   var categoriesArray =
-    sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
+      sheet.getRange(3, 2, sheet.getDataRange().getLastRow()).getValues();
 
   // 2 次元配列を flatten
-  var categories = categoriesArray.reduce(function (prev, curr) {
+  var categories = categoriesArray.reduce(function(prev, curr) {
     return prev.concat(curr);
   });
 
