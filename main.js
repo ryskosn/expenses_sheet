@@ -432,7 +432,8 @@ function setFormulaOfTransactionCommentLeft(sheet, row, date) {
   }
 
   // =LEFT($F95,2)
-  var formula = '=LEFT($F' + row + ',2)' cell.setFormula(formula);
+  var formula = '=LEFT($F' + row + ',2)';
+  cell.setFormula(formula);
 }
 
 
