@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/ryskosn/expenses_sheet.git"
   },
+  "directories": {
+    "test": "test/"
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -17,6 +20,7 @@
   },
   "homepage": "https://github.com/ryskosn/expenses_sheet#readme",
   "devDependencies": {
+    "gulp": "^3.9.1",
     "intelli-espower-loader": "^1.0.1",
     "mocha": "^3.2.0",
     "power-assert": "^1.4.2"
