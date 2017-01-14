@@ -1,28 +1,16 @@
 {
   "name": "expenses_sheet",
   "version": "1.0.0",
-  "description": "This JavaScript code is supposed to used for Google Apps Script.",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ryskosn/expenses_sheet.git"
-  },
-  "directories": {
-    "test": "test/"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ryskosn/expenses_sheet/issues"
-  },
-  "homepage": "https://github.com/ryskosn/expenses_sheet#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
     "intelli-espower-loader": "^1.0.1",
     "mocha": "^3.2.0",
     "power-assert": "^1.4.2"
+  },
+  "directories": {
+    "test": "test/"
+  },
+  "scripts": {
+    "test": "gulp test"
   }
 }
