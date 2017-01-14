@@ -1,7 +1,7 @@
 var assert = require("power-assert");  // assertモジュールのinclude
 
 var author = "hoo";
-it("is power-assert", function() {
+it("is power-assert sample", function() {
   // assert(author === 'hoo');
-  assert(author === 'hoge');  // ← 不一致エラー
+  assert(author === 'fuga');  // ← 不一致エラー
 });
