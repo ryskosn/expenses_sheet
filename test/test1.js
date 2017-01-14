@@ -4,7 +4,7 @@ describe('power-assert sample', function() {
   it("is sample", function() {
     var author = "hoo";
     // assert(author === 'hoo');
-    assert(author === 'hoo');  // ← 不一致エラー
+    assert(author === 'fuga');  // ← 不一致エラー
   });
 });
 
