@@ -10,6 +10,7 @@ gulp.task('test_raw', function() {
 
 gulp.task('test', function() {
   gulp.src('./test/*.js', {read: false}).pipe(mocha({
+    // for power-assert
     require: ['intelli-espower-loader']
   }));
 });
