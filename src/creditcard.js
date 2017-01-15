@@ -42,8 +42,6 @@ function getCreditcardNames() {
  * @return {array} creditcardExpenses
  */
 function getCreditcardExpenses() {
-  var allExpenses = getAllExpenses();
-
   /**
    * クレジットカードかどうか判定する
    * @param {string} cardName
@@ -56,6 +54,7 @@ function getCreditcardExpenses() {
     ];
     return otherCards.every(function(x) { return (x !== cardName); });
   }
+  var allExpenses = getAllExpenses();
   var creditcardExpenses = allExpenses.filter(function(row) {
     return (row[cardCol] && isCreditcard(row[cardCol]));
   });
