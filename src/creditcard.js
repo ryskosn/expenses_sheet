@@ -65,12 +65,14 @@ function getCreditcardExpenses() {
  * クレジットカードの締め日を求める
  *
  * @param {Object} card
+ * @param {number} year
  * @param {number} month
  * @return {Date} cutoffDate
  */
-function getCutoffDate(card, month) {
+function getCutoffDate(card, year, month) {
   // 締め日
   var cutoffDate = new Date();
+  cutoffDate.setFullYear(year);
   cutoffDate.setMonth(month);
 
   // 月末締めの場合
@@ -159,11 +161,12 @@ function getCardByName(cardName) {
  * @return {Date}
  */
 function getCutoffDateOfPurchase(purchaseDate, card) {
+  var py = purchaseDate.getFullYear();
   var pm = purchaseDate.getMonth();
   var pd = purchaseDate.getDate();
 
   // 購入月の締め日
-  var cutoffDate = getCutoffDate(card, pm);
+  var cutoffDate = getCutoffDate(card, py, pm);
   var cd = card['cutoffDate'];
 
   // 購入月の締め日を過ぎていた場合
