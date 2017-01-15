@@ -157,6 +157,8 @@ function getUniqueCardExpenses() {
       'cardName': cardName,
       'card': card,
       'cutoffDate': cutoffDate,
+
+      // 日時をミリ秒で表す
       'cutoffDateTime': cutoffDate.getTime(),
       'dueDate': getDueDate(card, cutoffDate),
     };
@@ -218,18 +220,18 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
  * creditcard シートにエントリを書き込む
  */
 function writeCreditcardEntries() {
-  var sheet = getCreditcardSheet();
   var arr = getUniqueCardExpenses();
 
   /**
    * obj と合致するものが array に含まれているか検査する
    * @param {Object} obj
-   * @param {array} array
+   * @param {array} array existentEntries of creditcard sheet
    * @return {boolean} 含まれていたら true を返す
    */
   function checker(obj, array) {
     var result = array.some(function(x) {
       return (
+          // 日時をミリ秒表現で比較する
           obj['cutoffDateTime'] === x[0].getTime() && obj['cardName'] === x[1]);
     });
     return result;
@@ -241,6 +243,7 @@ function writeCreditcardEntries() {
    * @param {Object} entry
    */
   function writer(sheet, entry) {
+    // 既存データの 1 行下に書き込む
     var row = sheet.getLastRow() + 1;
 
     // 締め日
@@ -261,25 +264,33 @@ function writeCreditcardEntries() {
         '!$G:$G=$B' + row + '))';
     sheet.getRange(row, 4).setFormula(formula);
   }
+  var sheet = getCreditcardSheet();
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  // sheet.getRange(2, 1, sheet.getLastRow(), 4)
-  //     .sort({column: 1, ascending: false});
+  sheet.getRange(2, 1, sheet.getLastRow(), 4)
+      .sort({column: 1, ascending: false});
 }
 
 /**
  * クレジットカードの支払いエントリを transactions シートに書き込む
  */
 function writeCreditcardWithdrawal() {
-  var sheet = getTransactionsSheet();
+  // creditcard シートのエントリを取得する
   var creditcardEntries =
       getCreditcardSheet().getDataRange().getValues().slice(1);
+
+  // [締め日, カード, 支払日, 金額]
+  // cf) [2016/11/15, ANAJCB, 2016/12/12, ¥103,928]
   var arr = creditcardEntries.map(function(row) {
     return {
+      // 締め日
       'cutoffDate': row[0],
+      // カード名
       'cardName': row[1],
+      // 支払日
       'dueDate': row[2],
+      // 日時をミリ秒で表す
       'dueDateTime': row[2].getTime(),
     };
   });
@@ -288,12 +299,13 @@ function writeCreditcardWithdrawal() {
   /**
    * obj と合致するものが array に含まれているか検査する
    * @param {Object} obj
-   * @param {array} array
+   * @param {array} array existentEntries of transactions sheet
    * @return {boolean} 含まれていたら true を返す
    */
   function checker(obj, array) {
     var result = array.some(function(x) {
       return (
+          // 日時をミリ秒表現で比較する
           obj['dueDateTime'] === x[0].getTime() && x[1] === '引落' &&
           obj['cardName'] === x[5]);
     });
@@ -306,6 +318,7 @@ function writeCreditcardWithdrawal() {
    * @param {Object} entry
    */
   function writer(sheet, entry) {
+    // 既存データの 1 行下に書き込む
     var row = sheet.getLastRow() + 1;
 
     // 日付
@@ -321,7 +334,7 @@ function writeCreditcardWithdrawal() {
     // いくら
     // =SUM(FILTER(expenses!$B:$B, expenses!$I:$I>=edate($A2, -1),
     // expenses!$I:$I<$A2, expenses!$G:$G=$B2))
-    var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
+    var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY, MM, DD)');
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
         expensesSheetName + '!$I:$I>=edate(' + cutoffDateStr + ',-1),' +
         expensesSheetName + '!$I:$I<=' + cutoffDateStr + ',' +
@@ -333,6 +346,7 @@ function writeCreditcardWithdrawal() {
     sheet.getRange(row, 6).setValue(entry['cardName']);
     setFormulaOfTransactionComment(sheet, row);
   }
+  var sheet = getTransactionsSheet();
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
