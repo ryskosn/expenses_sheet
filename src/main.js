@@ -71,19 +71,6 @@ function getCreditcardListSheet() {
   return getCreditcardListSheet.memoSheet;
 }
 
-// シートを取得する
-function getSheet(sheetName) {
-  var pairs = {};
-  pairs[categorySheetName] = getCategorySheet();
-  pairs[expensesSheetName] = getExpensesSheet();
-  pairs[transactionsSheetName] = getTransactionsSheet();
-  pairs[banklistSheetName] = getBanklistSheet();
-  pairs[dailySheetName] = getDailySheet();
-  pairs[creditcardSheetName] = getCreditcardSheet();
-  pairs[creditcardListSheetName] = getCreditcardListSheet();
-  return pairs[sheetName];
-}
-
 // 特定のリストのメモ化
 function getAllCategories() {
   if (getAllCategories.memolist) {
@@ -159,12 +146,6 @@ function onOpen() {
     }
   ];
   ss.addMenu('クレジットカード', items);
-
-  // クレジットカードの集計結果を入力する
-  // writeCreditcardEntries();
-
-  // クレジットカードの支払いエントリを transactions シートに書き込む
-  // writeCreditcardWithdrawal();
 }
 
 /**
@@ -238,11 +219,6 @@ function setFormulaOfDailySheetSum(sheet, dateSerial) {
   date.setMonth(date.getMonth() + 1);
   date.setDate(0);
   var lastDate = date.getDate();
-
-  // var m = Date.parse(date);
-  // m.setMonth(m.getMonth() + 1);
-  // m.setDate(0);
-  // var lastDate = m.getDate();
 
   var lastCol = '';
   switch (lastDate) {
