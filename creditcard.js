@@ -32,8 +32,7 @@ function getCreditcards() {
  */
 function getCreditcardNames() {
   var creditcards = getCreditcards();
-  var cardNames = creditcards.map(function(card) { return card['name']; });
-  return cardNames;
+  return creditcards.map(function(card) { return card['name']; });
 }
 
 /**
