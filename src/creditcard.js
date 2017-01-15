@@ -83,42 +83,6 @@ function getCutoffDate(card, year, month) {
 }
 
 /**
- * 指定した creditcard の月間トータルを集計する
- * @param {Object} card
- * @param {Date} cutoffDate 締め日
- * @return {number} sum
- */
-function getSumOfCreditcardExpenses(card, cutoffDate) {
-  var allCardExpenses = getCreditcardExpenses();
-  var cardName = card['name'];
-
-  // 前月締め日
-  var lastCutoffDate = offsetMonth(cutoffDate, -1);
-  lastCutoffDate.setHours(23, 59, 59, 0);
-
-  // 該当するエントリを抽出
-  // [ 日付, 金額, カテゴリ, サブカテゴリ, 店名, 品名, カード区分, 計上日修正 ]
-  var expenses = allCardExpenses.filter(function(row) {
-    return (
-        lastCutoffDate.getTime() < row[0].getTime() &&
-        row[0].getTime() <= cutoffDate.getTime() && row[6] === cardName);
-  });
-
-  var sum = 0;
-  switch (expenses.length) {
-    case 0:
-      break;
-    case 1:
-      sum = expenses[0][1];
-      break;
-    default:
-      sum = expenses.reduce(function(prev, curr) { return prev[1] + curr[1]; });
-      break;
-  }
-  return sum;
-}
-
-/**
  * クレジットカードの支払い日を求める
  * @param {Object} card
  * @param {Date} cutoffDate 締め日
