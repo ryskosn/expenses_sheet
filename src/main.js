@@ -150,7 +150,6 @@ function onOpen() {
 
 /**
  * セルの値を変更したときに実行される
- *
  * @param {object} e event object
  */
 function onEdit(e) {
@@ -208,7 +207,6 @@ function onEdit(e) {
 
 /**
  * daily シートで集計月の日数に合わせて sum 関数を設定する
- *
  * @param {object} sheet
  * @param {string} dateSerial
  */
@@ -296,7 +294,6 @@ function setValidationTransactionsTypes() {
 /**
  * 空白行のセルに入っている数式などを削除する
  * onOpen() で呼び出す
- *
  * @param {Sheet} sheet
  * @param {number} col 空白行かどうか判定する列
  */
@@ -322,7 +319,6 @@ function clearContentsOfBlankCells(sheet, col) {
 /**
  * メインカテゴリを指定すると、D 列にサブカテゴリを
  * 要素とした入力規則を設定する。
- *
  * @param {Sheet} sheet
  * @param {number} row
  * @param {string} mainCategory
@@ -354,7 +350,6 @@ function setValidationSubcategories(sheet, row, mainCategory) {
 
 /**
  * 新しいデータを追加すると I 列に計上日を求める数式を設定する。
- *
  * @param {Sheet} sheet
  * @param {number} row
  * @param {string} date
@@ -376,7 +371,6 @@ function setFormulaOfPurchaseDate(sheet, row, date) {
 
 /**
  * 取引種類を指定すると、それに応じて入力規則、値を設定する。
- *
  * @param {Sheet} sheet
  * @param {number} row
  * @param {string} transactionType
@@ -430,7 +424,6 @@ function setValidationTransactions(sheet, row, transactionType) {
 
 /**
  * transactions シートの転記用セルに関数を設定する
- *
  * @param {Sheet} sheet
  * @param {number} row
  * @param {string} date
@@ -454,7 +447,6 @@ function setFormulaOfTransactionComment(sheet, row, date) {
 
 /**
  * transactions シートの月間内訳集計用セルに関数を設定する
- *
  * @param {Sheet} sheet
  * @param {number} row
  * @param {string} date
@@ -477,7 +469,6 @@ function setFormulaOfTransactionCommentLeft(sheet, row, date) {
 
 /**
  * daily シートにメインカテゴリ、サブカテゴリを記載する
- *
  * @param {Sheet} sheet
  */
 function setCategoriesToDailySheet(sheet) {
@@ -512,7 +503,6 @@ function setCategoriesToDailySheet(sheet) {
 
 /**
  * expenses シートからすべてのエントリを取得する
- *
  * @return {array}
  */
 function getAllExpenses() {
@@ -532,7 +522,6 @@ function getAllExpenses() {
 
 /**
  * 指定した range のセルにメモを記載する
- *
  * @param {Range} range
  * @param {string} note
  */
@@ -547,7 +536,6 @@ function addNote(range, note) {
 
 /**
  * expenses シートで入力した店名を daily シートの該当セルにメモとして記載する
- *
  * @param {Sheet} sheet
  * @param {number} begin  2016/07/01, 2016/08/01 など日付のシリアル値
  */

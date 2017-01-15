@@ -1,6 +1,5 @@
 /**
  * dateObj の月を変更する
- *
  * @param {Date} dateObj
  * @param {number} offset 正の値を与えると後の月を返す 2 月 -> 3 月
  * @return {Date} newDateObj
@@ -31,7 +30,6 @@ function offsetMonth(dateObj, offset) {
 /**
  * 今日が日本の祝日かどうか判定する
  * http://qiita.com/kamatama_41/items/be40e05524530920a9d9
- *
  * @param {number} year
  * @param {number} month
  * @param {number} date
@@ -55,7 +53,6 @@ function isJapaneseHoliday(year, month, date) {
 /**
  * 直近の営業日を求める
  * TODO: 前倒し処理のフラグを用意する？
- *
  * @param {Date} dateObj
  * @return {Date} 直近営業日の dateObj
  */
@@ -98,7 +95,6 @@ function getNextBusinessDay(dateObj) {
 /**
  * 日付をフォーマットする
  * http://qiita.com/osakanafish/items/c64fe8a34e7221e811d0
- *
  * @param  {Date}   date     日付
  * @param  {String} [format] フォーマット
  * @return {String}          フォーマット済み日付
