@@ -1,3 +1,6 @@
+// expenses シートのエントリでカード名を入力する列
+var cardCol = 6;
+
 /**
  * クレジットカードのリストを取得する
  * TODO: memorize した方がよいかもしれない
@@ -48,16 +51,16 @@ function getCreditcardExpenses() {
    * @return {boolean}
    */
   function isCreditcard(cardName) {
-    var others = [
+    var otherCards = [
       'Suica',
       'nanaco',
     ];
-    var result = others.every(function(x) { return (x !== cardName); });
+    var result = otherCards.every(function(x) { return (x !== cardName); });
     return result;
   }
 
   var creditcardExpenses = allExpenses.filter(function(row) {
-    return (row[6] && isCreditcard(row[6]));
+    return (row[cardCol] && isCreditcard(row[cardCol]));
   });
   return creditcardExpenses;
 }
