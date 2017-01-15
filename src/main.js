@@ -146,11 +146,25 @@ function onOpen() {
   clearContentsOfBlankCells(expensesSheet, 1);
   clearContentsOfBlankCells(transactionsSheet, 1);
 
+  // カスタムメニューを設定
+  var ss = SpreadsheetApp.getActive();
+  var items = [
+    {
+      name: '集計結果を creditcard シートに入力',
+      functionName: 'writeCreditcardEntries'
+    },
+    {
+      name: 'カードの支払いエントリを transactions シートに入力',
+      functionName: 'writeCreditcardWithdrawal'
+    }
+  ];
+  ss.addMenu('クレジットカード', items);
+
   // クレジットカードの集計結果を入力する
-  writeCreditcardEntries();
+  // writeCreditcardEntries();
 
   // クレジットカードの支払いエントリを transactions シートに書き込む
-  writeCreditcardWithdrawal();
+  // writeCreditcardWithdrawal();
 }
 
 /**
