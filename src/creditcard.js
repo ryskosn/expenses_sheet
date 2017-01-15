@@ -116,8 +116,8 @@ function getCardByName(cardName) {
 }
 
 /**
- * 購入エントリの締め日を求める
- * @param {Date} purchaseDate 購入エントリの日付
+ * 購入データの締め日を求める
+ * @param {Date} purchaseDate 購入データの日付
  * @param {Object} card
  * @return {Date}
  */
@@ -217,7 +217,7 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
 }
 
 /**
- * creditcard シートにエントリを書き込む
+ * creditcard シートにデータを書き込む
  */
 function writeCreditcardEntries() {
   var arr = getUniqueCardExpenses();
@@ -273,10 +273,10 @@ function writeCreditcardEntries() {
 }
 
 /**
- * クレジットカードの支払いエントリを transactions シートに書き込む
+ * クレジットカードの支払いデータを transactions シートに書き込む
  */
 function writeCreditcardWithdrawal() {
-  // creditcard シートのエントリを取得する
+  // creditcard シートのデータを取得する
   var creditcardEntries =
       getCreditcardSheet().getDataRange().getValues().slice(1);
 
