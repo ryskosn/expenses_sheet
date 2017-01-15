@@ -49,7 +49,9 @@ function getCreditcardExpenses() {
       'Suica',
       'nanaco',
     ];
-    return otherCards.every(function(x) { return (x !== cardName); });
+    return otherCards.every(function(otherCard) {
+      return (otherCard !== cardName);
+    });
   }
   var allExpenses = getAllExpenses();
   var creditcardExpenses = allExpenses.filter(function(row) {
@@ -123,7 +125,10 @@ function getSumOfCreditcardExpenses(card, cutoffDate) {
  * @return {Date} dueDate
  */
 function getDueDate(card, cutoffDate) {
+  // そのカードの支払い月
   var dueMonthOffset = card['dueMonth'];
+
+  // そのカードの支払い日
   var dueDateOffset = card['dueDate'];
 
   // 支払い日
@@ -161,13 +166,11 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
   var cutoffDate = getCutoffDate(card, py, pm);
   var cd = card['cutoffDate'];
 
-  // 購入月の締め日を過ぎていた場合
+  // 購入月の締め日を過ぎていた場合、翌月の締め日を代入する
   if (cd !== 0 && pd > cd) {
     cutoffDate = offsetMonth(cutoffDate, 1);
     cutoffDate.setHours(23, 59, 59, 0);
   }
-  Logger.log('cutoffDate:');
-  Logger.log(cutoffDate);
   return cutoffDate;
 }
 
@@ -177,6 +180,8 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
  */
 function getUniqueCardExpenses() {
   var expenses = getCreditcardExpenses();
+
+  // [2016/12/03, ¥1,412, 雑費, , Amazon, USBスピーカー, ANAJCB, , 2016/12/03]
   var arr = expenses.map(function(row) {
 
     // 計上日修正があればそちらを使う
@@ -201,7 +206,8 @@ function getUniqueCardExpenses() {
     if (a.cutoffDateTime > b.cutoffDateTime) return 1;
   });
 
-  // 重複を除外 null or undefined が入る場合がある？
+  // 重複を除外する
+  // TODO: null or undefined が入る場合がある？
   arr = arr.map(function(x, i, self) {
     if (i === 0) {
       return x;
@@ -232,15 +238,15 @@ function writeNewEntries(sheet, arrOfObj, checker, writer) {
   var existentEntries = sheet.getDataRange().getValues().slice(1);
 
   if (existentEntries === []) {
-    arrOfObj.forEach(function(x) { writer(sheet, x); });
+    arrOfObj.forEach(function(obj) { writer(sheet, obj); });
     return;
   }
 
-  var entriesToWrite = arrOfObj.filter(function(x) {
-    return !checker(x, this);
+  var entriesToWrite = arrOfObj.filter(function(obj) {
+    return !checker(obj, this);
   }, existentEntries);
 
-  entriesToWrite.forEach(function(x) { writer(sheet, x); });
+  entriesToWrite.forEach(function(obj) { writer(sheet, obj); });
   return;
 }
 
@@ -283,7 +289,8 @@ function writeCreditcardEntries() {
     sheet.getRange(row, 3).setValue(entry['dueDate']);
 
     // 金額を集計
-    // =SUM(FILTER(expenses!$B:$B,expenses!$I:$I>=edate($A3,-1),expenses!$I:$I<$A3,expenses!$G:$G=$B3))
+    // =SUM(FILTER(expenses!$B:$B, expenses!$I:$I>=edate($A3, -1),
+    // expenses!$I:$I<$A3, expenses!$G:$G=$B3))
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
         expensesSheetName + '!$I:$I>=edate($A' + row + ',-1),' +
         expensesSheetName + '!$I:$I<$A' + row + ',' + expensesSheetName +
@@ -293,8 +300,8 @@ function writeCreditcardEntries() {
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  sheet.getRange(2, 1, sheet.getLastRow(), 4)
-      .sort({column: 1, ascending: false});
+  // sheet.getRange(2, 1, sheet.getLastRow(), 4)
+  //     .sort({column: 1, ascending: false});
 }
 
 /**
@@ -348,7 +355,8 @@ function writeCreditcardWithdrawal() {
     sheet.getRange(row, 3).setValue('要入力');
 
     // いくら
-    // =SUM(FILTER(expenses!$B:$B,expenses!$I:$I>=edate($A2,-1),expenses!$I:$I<$A2,expenses!$G:$G=$B2))
+    // =SUM(FILTER(expenses!$B:$B, expenses!$I:$I>=edate($A2, -1),
+    // expenses!$I:$I<$A2, expenses!$G:$G=$B2))
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
         expensesSheetName + '!$I:$I>=edate(' + cutoffDateStr + ',-1),' +
@@ -364,6 +372,6 @@ function writeCreditcardWithdrawal() {
   writeNewEntries(sheet, arr, checker, writer);
 
   // sort
-  sheet.getRange(2, 1, sheet.getLastRow(), 7)
-      .sort({column: 1, ascending: true});
+  // sheet.getRange(2, 1, sheet.getLastRow(), 7)
+  //     .sort({column: 1, ascending: true});
 }
