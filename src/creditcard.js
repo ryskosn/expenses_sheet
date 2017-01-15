@@ -360,7 +360,7 @@ function writeCreditcardWithdrawal() {
     var cutoffDateStr = formatDate(entry['cutoffDate'], 'DATE(YYYY,MM,DD)');
     var formula = '=SUM(FILTER(' + expensesSheetName + '!$B:$B,' +
         expensesSheetName + '!$I:$I>=edate(' + cutoffDateStr + ',-1),' +
-        expensesSheetName + '!$I:$I<' + cutoffDateStr + ',' +
+        expensesSheetName + '!$I:$I<=' + cutoffDateStr + ',' +
         expensesSheetName + '!$G:$G=$F' + row + '))';
     sheet.getRange(row, 5).setFormula(formula);
     sheet.getRange(row, 5).setFontColor('black');
