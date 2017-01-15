@@ -4,7 +4,6 @@ var cardCol = 6;
 /**
  * クレジットカードのリストを取得する
  * TODO: memorize した方がよいかもしれない
- *
  * @return {array} creditcards array of object
  */
 function getCreditcards() {
@@ -27,7 +26,6 @@ function getCreditcards() {
 
 /**
  * クレジットカードのカード名のリストを取得する
- *
  * @return {array} creditcard name array of string
  */
 function getCreditcardNames() {
@@ -38,7 +36,6 @@ function getCreditcardNames() {
 /**
  * クレジットカードの expense のリストを取得する
  * Suica などを追加するなら、判定処理を変更する必要あり
- *
  * @return {array} creditcardExpenses
  */
 function getCreditcardExpenses() {
@@ -63,7 +60,6 @@ function getCreditcardExpenses() {
 
 /**
  * クレジットカードの締め日を求める
- *
  * @param {Object} card
  * @param {number} year
  * @param {number} month
@@ -86,7 +82,6 @@ function getCutoffDate(card, year, month) {
 
 /**
  * 指定した creditcard の月間トータルを集計する
- *
  * @param {Object} card
  * @param {Date} cutoffDate 締め日
  * @return {number} sum
@@ -123,7 +118,6 @@ function getSumOfCreditcardExpenses(card, cutoffDate) {
 
 /**
  * クレジットカードの支払い日を求める
- *
  * @param {Object} card
  * @param {Date} cutoffDate 締め日
  * @return {Date} dueDate
@@ -142,7 +136,6 @@ function getDueDate(card, cutoffDate) {
 
 /**
  * クレジットカード名からカードの object 求める
- *
  * @param {string} cardName
  * @return {Object} purchaseCard[0]
  */
@@ -155,7 +148,6 @@ function getCardByName(cardName) {
 
 /**
  * 購入エントリの締め日を求める
- *
  * @param {Date} purchaseDate 購入エントリの日付
  * @param {Object} card
  * @return {Date}
@@ -181,7 +173,6 @@ function getCutoffDateOfPurchase(purchaseDate, card) {
 
 /**
  * 重複を取り除いたカード名と締め日のペアを求める
- *
  * @return {array} cardName: string, cutoffDateTime: number
  */
 function getUniqueCardExpenses() {
@@ -232,7 +223,6 @@ function getUniqueCardExpenses() {
 
 /**
  * シートに未入力のデータがあれば書き込む
- *
  * @param {Sheet} sheet 対象のシートオブジェクト
  * @param {array} arrOfObj 書き込むデータオブジェクトの配列
  * @param {function} checker 既存のデータとの重複をチェックする関数
@@ -263,7 +253,6 @@ function writeCreditcardEntries() {
 
   /**
    * obj と合致するものが array に含まれているか検査する
-   *
    * @param {Object} obj
    * @param {array} array
    * @return {boolean} 含まれていたら true を返す
@@ -278,7 +267,6 @@ function writeCreditcardEntries() {
 
   /**
    * シートに書き込む
-   *
    * @param {Sheet} sheet
    * @param {Object} entry
    */
@@ -328,7 +316,6 @@ function writeCreditcardWithdrawal() {
 
   /**
    * obj と合致するものが array に含まれているか検査する
-   *
    * @param {Object} obj
    * @param {array} array
    * @return {boolean} 含まれていたら true を返す
@@ -344,7 +331,6 @@ function writeCreditcardWithdrawal() {
 
   /**
    * シートに書き込む
-   *
    * @param {Sheet} sheet
    * @param {Object} entry
    */
