@@ -141,7 +141,7 @@ function onOpen() {
       functionName: 'writeCreditcardEntries'
     },
     {
-      name: 'カードの支払いエントリを transactions シートに入力',
+      name: 'カードの支払いデータを transactions シートに入力',
       functionName: 'writeCreditcardWithdrawal'
     }
   ];
